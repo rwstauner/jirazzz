@@ -1,0 +1,347 @@
+#!/usr/bin/env bb
+
+(ns jirazzz
+  {:clj-kondo/config '{:linters
+                       {:unresolved-symbol
+                        {:exclude [(jirazzz/make-req-cmd)]}}}}
+  (:require
+    [babashka.fs :as fs]
+    [cheshire.core :as json]
+    [clojure.edn :as edn]
+    [clojure.string :as string]
+    [clojure.tools.cli :as cli]
+    [org.httpkit.client :as http]))
+
+
+; cli utils
+(defn warn
+  [& args]
+  (binding [*out* *err*]
+    (println (apply str args))))
+
+
+(defn exit
+  [n]
+  (System/exit n))
+
+
+; config
+(defn env
+  [k]
+  (System/getenv k))
+
+
+(def HOME (env "HOME"))
+
+
+(def config-file
+  (or (env "JIRAZZZ_CONFIG_FILE")
+      (fs/path HOME ".jirazzz.edn")))
+
+
+(defn relative-to-home
+  [p]
+  (cond->> p
+    (fs/relative? p) (fs/path HOME)))
+
+
+(def read-file
+  (comp string/trim slurp str relative-to-home))
+
+
+(def read-edn
+  (partial edn/read-string {:readers {'env env
+                                      'file read-file}}))
+
+
+(def config (-> config-file str slurp read-edn))
+
+
+(defn maybe-string
+  [s]
+  (when-not (string/blank? s)
+    s))
+
+
+(defn parse-json
+  [json]
+  (when json
+    (json/parse-string json true)))
+
+
+(def ->json json/generate-string)
+
+
+(defn parse-string
+  [opts s]
+  (let [f (case (:input-format opts)
+            :json parse-json
+            edn/read-string)]
+    (f s)))
+
+
+(defn ->string
+  [opts v]
+  (let [f (case (:output-format opts)
+            :json ->json
+            pr-str)]
+    (f v)))
+
+
+(def ->nil (constantly nil))
+
+
+(defn custom-fields
+  [opts]
+  (some->> (:custom-fields opts)
+           (map (fn [[fname ffield]]
+                  [ffield (get opts fname)]))
+           (into {})))
+
+
+(defn jira-url
+  [opts path]
+  (str (:url opts) path))
+
+
+(defn jira-req
+  [opts method path & [req-opts]]
+  (let [json (some-> req-opts
+                     :json
+                     ->json)
+        headers (cond-> (:headers opts)
+                  json (assoc "Content-type" "application/json; charset=utf-8"))
+        req (merge {:url (jira-url opts path)
+                    :method method
+                    :headers headers
+                    :body json}
+                   (dissoc req-opts :json))
+        response @(http/request req)
+        is-json? (-> response
+                     (get-in [:headers :content-type])
+                     (->> (re-find #"/json")))]
+    (-> response
+        :body
+        maybe-string
+        (cond->
+          is-json? parse-json)
+        ; if there is no body return the whole response
+        (or (dissoc response :opts :headers)))))
+
+
+(defn jira-get-meta
+  [{:keys [project issue-type] :as opts}]
+  (let [issue-meta (jira-req opts :get "/rest/api/2/issue/createmeta" {:query-params {:projectKeys project}})
+        proj (-> issue-meta
+                 :projects
+                 (->> (filter #(= (:key %) project)))
+                 first)
+        sprints (-> (jira-req opts :get (str "/rest/greenhopper/1.0/sprintquery/" (:rapid-view opts)))
+                    :sprints
+                    (->> (remove #(= (:state %) "CLOSED"))))
+        sprint-id (-> (or (-> sprints
+                              (->> (filter #(= (:state %) "ACTIVE")))
+                              first)
+                          (-> sprints
+                              first))
+                      :id)]
+    {:project-id (:id proj)
+     :sprint-id sprint-id
+     :type-id (-> proj
+                  :issuetypes
+                  (->> (filter #(= (:name %) issue-type)))
+                  first
+                  :id)}))
+
+
+(defn jira-user
+  [opts typ]
+  (get opts typ "-1"))
+
+
+(defn create-issue
+  [opts]
+  (jira-req opts
+            :post
+            "/rest/api/2/issue"
+            {:json {:fields (merge
+                              (select-keys opts [:summary
+                                                 :description])
+                              {:project {:id (:project-id opts)}
+                               :issuetype {:id (:type-id opts)}
+                               :assignee {:name (jira-user opts :assignee)}}
+                              (custom-fields opts))}}))
+
+
+; commands
+(defmacro make-req-cmd
+  [verb]
+  `(defn ~(symbol (str "$" verb))
+     {:command (quote ~verb)
+      :doc ~(format "Send %-6s request: jirazzz %-6s /rest/api/x/y/z …"
+                        (string/upper-case (str verb))
+                        (str verb))
+      :sort 2}
+     [opts path data]
+     (let [argmap (or (some->> data (parse-string opts))
+                      {})
+           response (jira-req opts ~(keyword verb) path argmap)
+           is-json? (-> response
+                        (get-in [:headers :content-type])
+                        (->> (re-find #"/json")))]
+       (println (-> response
+                    (dissoc :headers)
+                    (cond->
+                      is-json? (update :body parse-json))
+                    ->string)))))
+
+
+(make-req-cmd get)
+(make-req-cmd post)
+(make-req-cmd put)
+(make-req-cmd delete)
+
+
+(defn assign
+  {:command 'assign
+   :doc "Set assignee on issue: jirazzz assign --issue ABC-123 username"}
+  [opts & [assignee]]
+  (jira-req opts
+            :put
+            (str "/rest/api/2/issue/" (:issue opts) "/assignee")
+            {:json {:name (or assignee
+                              (:assignee opts))}}))
+
+
+(defn transition
+  {:command 'transition
+   :doc "Transition issue: jirazzz transition --issue ABC-123 --transition 'done'"}
+  [opts & [to]]
+  (let [issue (:issue opts)
+        path (str "/rest/api/2/issue/" issue "/transitions")
+        response (jira-req opts :get path)
+        to (string/lower-case (or to
+                                  (:transition opts)))
+        t-id (-> response
+                 :transitions
+                 (->> (filter #(= (-> % :name string/lower-case)
+                                  to)))
+                 first
+                 :id)]
+    ; TODO: error if not found
+    (jira-req opts
+              :post
+              path
+              {:json {:transition {:id t-id}}})))
+
+
+(defn create
+  {:command 'create
+   :doc "Create issue: jirazzz create --summary … --description …"}
+  [opts]
+  (let [result (create-issue opts)
+        opts (-> opts
+                 (assoc :issue (:id result)))]
+    (when (:transition opts)
+      (transition opts))
+    ; TODO: include transition?
+    (:body result)))
+
+
+(defn issue
+  {:command 'issue
+   :doc "Get issue: jirazzz issue KEY"}
+  [opts & [ky]]
+  (-> opts
+      (jira-req :get (str "/rest/api/2/issue/" (or ky
+                                                   (:issue opts))))))
+
+
+(def cli-options
+  (concat
+    [["-h" "--help" "Show usage"]
+
+     [nil  "--description DESC" "Issue description"]
+     ["-i" "--issue KEY" "Issue Key"]
+     ["-p" "--project PROJECT" "Project for issue creation"]
+     [nil  "--rapid-view ID" "RapidView id"]
+     [nil  "--summary SUMMARY" "Issue summary"]
+     [nil  "--transition NAME" "Transition issue to this state"]
+     [nil  "--type TYPE" "Issue Type"]
+     [nil  "--url URL" "Jira URL"]
+
+     [nil  "--input-format FORMAT" "Set input format (can be 'json', default is 'edn')"
+      :parse-fn keyword]
+     [nil  "--output-format FORMAT" "Set output format (can be 'json', default is 'edn')"
+      :parse-fn keyword]]
+    (-> config
+        :custom-fields
+        (or {})
+        (keys)
+        (->> (map name))
+        (->> (map (fn [k]
+                    [nil
+                     (str "--" k " " (string/upper-case k))
+                     (str "Set custom field for " k)]))))))
+
+
+(defn commands
+  []
+  (-> (ns-publics *ns*)
+      vals
+      (->> (map #(vector (-> % meta :command) %))
+           (filter first)
+           (into {}))))
+
+
+(defn usage
+  [{:keys [errors summary]}]
+  (->> [errors
+        "Usage: jirazzz command [options]"
+        ""
+        "Commands:"
+        ""
+        (for [[cmd v] (sort-by (juxt #(-> % second meta :sort) first) (commands))]
+          (format "  %-12s %s" cmd (-> v meta :doc)))
+        ""
+        (str "Options can be specified on the command line or in " config-file)
+        "Any aliases defined in {:custom-fields {:your-name :customfield_00000}}"
+        "can also be set in the config file or on the command line (see below)."
+        ""
+        "Options:"
+        summary]
+       (flatten)
+       (filter identity)
+       (string/join "\n")))
+
+
+; main
+(defn parse-args
+  [args]
+  (let [parsed (cli/parse-opts args cli-options)
+        args (-> parsed :arguments)
+        cmdname (some-> args first symbol)
+        cmd (get (commands) cmdname)
+        args (rest args)]
+    (when (-> parsed :options :help)
+      (warn (usage parsed))
+      (exit 0))
+    (when-not cmd
+      (when cmdname
+        (warn "Unknown command: " cmdname))
+      (warn (usage parsed))
+      (exit 1))
+    (let [opts (merge config (:options parsed))
+          opts (merge (jira-get-meta opts) opts)]
+      [cmd opts args])))
+
+
+(defn -main
+  [& args]
+  (let [[cmd opts args] (parse-args args)]
+    (->> (apply cmd opts args)
+         (->string opts)
+         println)))
+
+
+(apply -main *command-line-args*)

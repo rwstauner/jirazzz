@@ -175,13 +175,13 @@
 
 ; commands
 (defmacro make-req-cmd
-  [verb]
+  [verb & [weight]]
   `(defn ~(symbol (str "$" verb))
      {:command (quote ~verb)
       :doc ~(format "Send %-6s request: jirazzz %-6s /rest/api/x/y/z …"
                         (string/upper-case (str verb))
                         (str verb))
-      :sort 2}
+      :sort ~(or weight 2)}
      [opts path data]
      (let [argmap (or (some->> data (parse-string opts))
                       {})
@@ -199,7 +199,7 @@
 (make-req-cmd get)
 (make-req-cmd post)
 (make-req-cmd put)
-(make-req-cmd delete)
+(make-req-cmd delete 3)
 
 
 (defn assign

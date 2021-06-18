@@ -10,7 +10,8 @@
     [clojure.edn :as edn]
     [clojure.string :as string]
     [clojure.tools.cli :as cli]
-    [org.httpkit.client :as http]))
+    [org.httpkit.client :as http]
+    [selmer.parser :as selmer]))
 
 
 ; cli utils
@@ -89,6 +90,12 @@
 
 
 (def ->nil (constantly nil))
+
+
+(defn render-template
+  [opts template]
+  (-> (selmer/render template opts)
+      (string/trim)))
 
 
 (defn custom-fields
@@ -179,8 +186,8 @@
   `(defn ~(symbol (str "$" verb))
      {:command (quote ~verb)
       :doc ~(format "Send %-6s request: jirazzz %-6s /rest/api/x/y/z …"
-                        (string/upper-case (str verb))
-                        (str verb))
+                    (string/upper-case (str verb))
+                    (str verb))
       :sort ~(or weight 2)}
      [opts path data]
      (let [argmap (or (some->> data (parse-string opts))
@@ -255,6 +262,50 @@
   (-> opts
       (jira-req :get (str "/rest/api/2/issue/" (or ky
                                                    (:issue opts))))))
+
+
+(defn issue-pattern
+  [opts]
+  (-> opts
+      :issue-pattern
+      (or "([A-Z]+-[0-9]+)")
+      re-pattern))
+
+
+(defn commit-msg
+  {:command 'commit-msg
+   :doc "Create issue from commit msg if no reference exists"}
+  [opts path]
+  (let [contents (slurp path)]
+    (when-not (re-find (issue-pattern opts) contents)
+      (let [lines (string/split-lines contents)
+            summary (first lines)
+            description (string/join "\n" (drop-while string/blank? (rest lines)))
+            opts (-> opts
+                     (assoc :summary summary :description description))
+            result (create-issue opts)
+            ky (:key result)
+            template (-> opts
+                         :commit-template
+                         (or "{{summary}}\n\ncloses {{issue}}\n\n{{description}}"))
+            opts (-> opts
+                     (assoc :issue ky))]
+        (if-not ky
+          (warn result)
+          (spit path
+                (render-template opts template)))))))
+
+
+(defn parse-log
+  {:command 'parse-log
+   :doc "Parse commit log and transition referenced issues"}
+  [opts]
+  (-> *in*
+      slurp
+      (->> (re-seq (issue-pattern opts))
+           (map second)
+           set
+           (map #(transition (assoc opts :issue %))))))
 
 
 (def cli-options

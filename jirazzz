@@ -172,18 +172,56 @@
   (get opts typ "-1"))
 
 
+(defn add-error
+  [opts error]
+  (-> opts
+      (update :errors (fnil conj []) error)))
+
+
+(defn transition
+  [opts]
+  (if-not (:transition opts)
+    opts
+    (let [issue (:issue opts)
+          path (str "/rest/api/2/issue/" issue "/transitions")
+          response (jira-req opts :get path)
+          to (string/lower-case (:transition opts))
+          t-id (-> response
+                   :transitions
+                   (->> (filter #(= (-> % :name string/lower-case)
+                                    to)))
+                   first
+                   :id)]
+      (if-not t-id
+        (-> opts
+            (add-error (str "transition '" to "' not found")))
+        (do
+          (jira-req opts
+                    :post
+                    path
+                    {:json {:transition {:id t-id}}})
+          opts)))))
+
+
 (defn create-issue
   [opts]
-  (jira-req opts
-            :post
-            "/rest/api/2/issue"
-            {:json {:fields (merge
-                              (select-keys opts [:summary
-                                                 :description])
-                              {:project {:id (:project-id opts)}
-                               :issuetype {:id (:type-id opts)}
-                               :assignee {:name (jira-user opts :assignee)}}
-                              (custom-fields opts))}}))
+  (let [response (jira-req
+                   opts
+                   :post
+                   "/rest/api/2/issue"
+                   {:json {:fields (merge
+                                     (select-keys opts [:summary
+                                                        :description])
+                                     {:project {:id (:project-id opts)}
+                                      :issuetype {:id (:type-id opts)}
+                                      :assignee {:name (jira-user opts :assignee)}}
+                                     (custom-fields opts))}})
+        ky (:key response)
+        opts (-> opts
+                 (assoc :issue ky)
+                 (cond->
+                   (not ky) (add-error response)))]
+    (transition opts)))
 
 
 ; commands
@@ -226,39 +264,23 @@
                               (:assignee opts))}}))
 
 
-(defn transition
+(defn $transition
   {:command 'transition
    :doc "Transition issue: jirazzz transition --issue ABC-123 --transition 'done'"}
   [opts & [to]]
-  (let [issue (:issue opts)
-        path (str "/rest/api/2/issue/" issue "/transitions")
-        response (jira-req opts :get path)
-        to (string/lower-case (or to
-                                  (:transition opts)))
-        t-id (-> response
-                 :transitions
-                 (->> (filter #(= (-> % :name string/lower-case)
-                                  to)))
-                 first
-                 :id)]
-    ; TODO: error if not found
-    (jira-req opts
-              :post
-              path
-              {:json {:transition {:id t-id}}})))
+  (-> opts
+      (cond->
+        to (assoc :transition to))
+      transition))
 
 
 (defn create
   {:command 'create
    :doc "Create issue: jirazzz create --summary … --description …"}
   [opts]
-  (let [result (create-issue opts)
-        opts (-> opts
-                 (assoc :issue (:id result)))]
-    (when (:transition opts)
-      (transition opts))
-    ; TODO: include transition?
-    (:body result)))
+  (-> opts
+      create-issue
+      :issue))
 
 
 (defn issue
@@ -289,15 +311,12 @@
             description (string/join "\n" (drop-while string/blank? (rest lines)))
             opts (-> opts
                      (assoc :summary summary :description description))
-            result (create-issue opts)
-            ky (:key result)
+            opts (create-issue opts)
             template (-> opts
                          :commit-template
-                         (or "{{summary}}\n\ncloses {{issue}}\n\n{{description}}"))
-            opts (-> opts
-                     (assoc :issue ky))]
-        (if-not ky
-          (warn result)
+                         (or "{{summary}}\n\ncloses {{issue}}\n\n{{description}}"))]
+        (if-not (:issue opts)
+          (warn (:errors opts))
           (spit path
                 (render-template opts template)))))))
 
@@ -311,7 +330,10 @@
       (->> (re-seq (issue-pattern opts))
            (map second)
            set
-           (map #(transition (assoc opts :issue %))))))
+           (map #(-> opts
+                     (assoc :issue %)
+                     transition
+                     :issue)))))
 
 
 (def cli-options

@@ -136,14 +136,9 @@
         (or (dissoc response :opts :headers)))))
 
 
-(defn jira-get-meta
-  [{:keys [project issue-type] :as opts}]
-  (let [issue-meta (jira-req opts :get "/rest/api/2/issue/createmeta" {:query-params {:projectKeys project}})
-        proj (-> issue-meta
-                 :projects
-                 (->> (filter #(= (:key %) project)))
-                 first)
-        sprints (-> (jira-req opts :get (str "/rest/greenhopper/1.0/sprintquery/" (:rapid-view opts)))
+(defn get-sprint-id
+  [opts]
+  (let [sprints (-> (jira-req opts :get (str "/rest/greenhopper/1.0/sprintquery/" (:rapid-view opts)))
                     :sprints
                     (->> (remove #(= (:state %) "CLOSED"))))
         sprint-id (-> (or (-> sprints
@@ -152,13 +147,24 @@
                           (-> sprints
                               first))
                       :id)]
-    {:project-id (:id proj)
-     :sprint-id sprint-id
-     :type-id (-> proj
-                  :issuetypes
-                  (->> (filter #(= (:name %) issue-type)))
-                  first
-                  :id)}))
+    sprint-id))
+
+
+(defn get-meta
+  [{:keys [project issue-type] :as opts}]
+  (let [issue-meta (jira-req opts :get "/rest/api/2/issue/createmeta" {:query-params {:projectKeys project}})
+        proj (-> issue-meta
+                 :projects
+                 (->> (filter #(= (:key %) project)))
+                 first)
+        result {:project-id (:id proj)
+                :type-id (-> proj
+                             :issuetypes
+                             (->> (filter #(= (:name %) issue-type)))
+                             first
+                             :id)}]
+    (cond-> result
+      (not (:backlog opts)) (assoc :sprint-id (get-sprint-id opts)))))
 
 
 (defn jira-user
@@ -312,6 +318,7 @@
   (concat
     [["-h" "--help" "Show usage"]
 
+     [nil  "--backlog" "Put isue in backlog instead of current sprint"]
      [nil  "--description DESC" "Issue description"]
      ["-i" "--issue KEY" "Issue Key"]
      ["-p" "--project PROJECT" "Project for issue creation"]
@@ -383,7 +390,7 @@
       (warn (usage parsed))
       (exit 1))
     (let [opts (merge config (:options parsed))
-          opts (merge (jira-get-meta opts) opts)]
+          opts (merge (get-meta opts) opts)]
       [cmd opts args])))
 
 

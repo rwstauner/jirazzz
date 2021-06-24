@@ -318,6 +318,7 @@
   (concat
     [["-h" "--help" "Show usage"]
 
+     [nil  "--assignee USERNAME" "Assign issue to username (-1 for unassigned)"]
      [nil  "--backlog" "Put isue in backlog instead of current sprint"]
      [nil  "--description DESC" "Issue description"]
      ["-i" "--issue KEY" "Issue Key"]

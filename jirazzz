@@ -362,7 +362,7 @@
         (->> (map name))
         (->> (map (fn [k]
                     [nil
-                     (str "--" k " " (string/upper-case k))
+                     (str "--" k " VALUE")
                      (str "Set custom field for " k)]))))))
 
 

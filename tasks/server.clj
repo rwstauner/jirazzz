@@ -1,6 +1,7 @@
 (ns server
   (:require
     [cheshire.core :as json]
+    [clojure.walk :as walk]
     [org.httpkit.server :as server]))
 
 
@@ -40,7 +41,8 @@
         (when log?
           (prn "Match?" match (select-keys req (keys match))))
         (if (= match (select-keys req (keys match)))
-          (select-keys r [:body :headers :status])
+          (-> (select-keys r [:body :headers :status])
+              (update :headers walk/stringify-keys))
           (recur (rest rs))))
       {:status 404})))
 

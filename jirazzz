@@ -11,7 +11,8 @@
     [clojure.string :as string]
     [clojure.tools.cli :as cli]
     [org.httpkit.client :as http]
-    [selmer.parser :as selmer]))
+    [selmer.parser :as selmer]
+    [selmer.util :as selmer-util]))
 
 
 ; cli utils
@@ -110,7 +111,8 @@
 
 (defn render-template
   [opts template]
-  (-> (selmer/render template opts)
+  (-> (selmer-util/without-escaping
+        (selmer/render template opts))
       (string/trim)))
 
 (defn show-errors

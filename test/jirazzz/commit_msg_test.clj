@@ -15,14 +15,14 @@
 
   (tu/with-temp-files
     [tmp "cmsg.txt"]
-    (let [_ (spit tmp "subject\n\nbody\nmore\n")
+    (let [_ (spit tmp "subject\n\nbody\ns'more\n")
           r (jirazzz commit-msg (str tmp)
                      --transition "done"
                      --assignee jzuser)]
       (is (= 0
              (:exit r))
           (:err r))
-      (is (= "subject\n\ncloses JZ-123\n\nbody\nmore"
+      (is (= "subject\n\ncloses JZ-123\n\nbody\ns'more"
              (slurp tmp)))
       (is (= "\n"
              (:out r))
@@ -38,7 +38,7 @@
            :body
            {:fields
             {:summary "subject"
-             :description "body\nmore"
+             :description "body\ns'more"
              :project {:id 123456}
              :issuetype {:id 1}
              :assignee {:name "jzuser"}

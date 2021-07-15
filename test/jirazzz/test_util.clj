@@ -38,7 +38,7 @@
 (defmacro jirazzz
   [& args]
   (->> (concat [bb script]
-               (map str args)
+               (map #(cond-> % (simple-symbol? %) str) args)
                [:env {"JIRAZZZ_CONFIG_FILE" `*test-config*
                       "JIRAZZZ_TEST_URL" url}])
        (apply list sh)))

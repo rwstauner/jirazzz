@@ -15,7 +15,7 @@
   (let [r (tu/with-test-config
             "none"
             (jirazzz create
-                     --url "http://localhost:54646"
+                     --url tu/url
                      --project "JZ"
                      --assignee "me"
                      --issue-type "Task"

@@ -46,6 +46,7 @@
 (def jira-paths
   {:assignee "/rest/api/2/issue/JZ-123/assignee"
    :create "/rest/api/2/issue"
+   :issue "/rest/api/2/issue/JZ-123"
    :meta "/rest/api/2/issue/createmeta"
    :sprint "/rest/greenhopper/1.0/sprintquery/98"
    :transitions "/rest/api/2/issue/JZ-123/transitions"})
@@ -108,6 +109,14 @@
     :headers {"content-type" "application/json"}
     :body (json/generate-string
             {:key "JZ-123"})}
+
+   :issue
+   {:match {:uri (:issue jira-paths)}
+    :status 200
+    :headers {"content-type" "application/json"}
+    :body (json/generate-string
+            {:just "print it"})}
+
    :meta
    {:match {:uri (:meta jira-paths)}
     :status 200

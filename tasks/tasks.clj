@@ -66,8 +66,12 @@
 
 
 (defn test
-  []
-  (let [tests test-namespaces]
+  [patterns]
+  (let [tests (cond-> test-namespaces
+                (seq patterns)
+                (->> (filter (fn [t]
+                               (some #(re-find % (str t))
+                                     (map re-pattern patterns))))))]
     (doseq [t tests]
       (require t))
     (-> (apply t/run-tests tests)

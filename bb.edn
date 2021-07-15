@@ -1,15 +1,26 @@
 {:paths ["tasks" "test"]
  :min-bb-version "0.4.0"
  :tasks
- {:requires ([server :as s]
+ {:requires ([babashka.fs :as fs]
+             [server :as s]
              [tasks :as t])
   docs t/docs
   lint (shell "clj-kondo" "--lint" ".")
+  -nrepl-port (or (System/getenv "NREPL_PORT")
+                  "54601")
+  nrepl {:doc "Start nrepl server for editor integration"
+         :depends [-nrepl-port]
+         :task
+         (do
+           (spit ".nrepl-port" -nrepl-port)
+           (try
+             (shell "bb" "--nrepl-server" -nrepl-port)
+             (finally
+               (fs/delete ".nrepl-port"))))}
   ; Check for changes so pre-commit will abort and changes can be added.
   pre-commit {:depends [docs lint style:check]
               :doc "A git pre-commit hook to check docs, style, etc"
               :task (shell "git" "diff" "--exit-code" "README.md")}
-  repl (shell "bb" "--nrepl-server" "54601")
   server (s/wait)
   style:check (shell "cljstyle" "check")
   style:fix (shell "cljstyle" "fix")

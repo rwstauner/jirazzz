@@ -372,7 +372,16 @@
            (map #(-> opts
                      (assoc :issue %)
                      transition
-                     :issue)))))
+                     :issue)))
+      (as-> xs
+        (if (seq xs)
+          (string/join
+            "\n"
+            (map #(-> opts
+                      (assoc :issue %)
+                      (render-template "{{issue}} transitioned to {{transition}}"))
+                 xs))
+          ""))))
 
 
 (def cli-options

@@ -113,6 +113,14 @@
   (-> (selmer/render template opts)
       (string/trim)))
 
+(defn show-errors
+  [opts]
+  (if (:errors opts)
+    (do
+      (run! warn (:errors opts))
+      (exit 1))
+    opts))
+
 
 (defn custom-fields
   [opts]
@@ -293,6 +301,7 @@
       (cond->
         to (assoc :transition to))
       transition
+      show-errors
       (render-template "{{issue}} moved to {{transition}}")))
 
 

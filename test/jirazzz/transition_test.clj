@@ -36,3 +36,28 @@
            {:transition
             {:id 3}}}]
          (tu/requests))))
+
+(deftest unknown-transition
+  (tu/respond (:meta tu/responses))
+  (tu/respond (:sprint tu/responses))
+  (tu/respond (:transitions tu/responses))
+
+  (let [r (jirazzz transition
+                   --issue "JZ-123"
+                   "foo")]
+    (is (= 1
+           (:exit r))
+        (:err r))
+    (is (= "transition 'foo' not found\n"
+           (:err r))
+        (:out r)))
+
+  (is (= [{:uri (:meta tu/jira-paths)
+           :method "get"
+           :query-string "projectKeys=JZ"}
+          ; TODO don't get sprint if we aren't going to use it.
+          {:uri (:sprint tu/jira-paths)
+           :method "get"}
+          {:uri (:transitions tu/jira-paths)
+           :method "get"}]
+         (tu/requests))))

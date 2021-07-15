@@ -33,3 +33,29 @@
            :body {:name "jzuser"}}]
          (tu/requests))))
 
+(deftest assignee-unknown
+  (tu/respond (:meta tu/responses))
+  (tu/respond (:sprint tu/responses))
+  (tu/respond (:assignee-unknown tu/responses))
+
+  (let [r (jirazzz assign
+                   --issue "JZ-123"
+                   --assignee bad-user)]
+    (is (= 1
+           (:exit r))
+        (:err r))
+    (is (= "User 'bad-user' does not exist.\n"
+           (:err r))
+        (:out r)))
+
+  (is (= [{:uri (:meta tu/jira-paths)
+           :method "get"
+           :query-string "projectKeys=JZ"}
+          ; TODO don't get sprint if we aren't going to use it.
+          {:uri (:sprint tu/jira-paths)
+           :method "get"}
+          {:uri (:assignee tu/jira-paths)
+           :method "put"
+           :body {:name "bad-user"}}]
+         (tu/requests))))
+

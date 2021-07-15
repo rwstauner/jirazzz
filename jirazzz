@@ -286,12 +286,20 @@
   {:command 'assign
    :doc "Set assignee on issue: jirazzz assign --issue ABC-123 username"}
   [opts & [assignee]]
-  (jira-req opts
-            :put
-            (str "/rest/api/2/issue/" (:issue opts) "/assignee")
-            {:json {:name (or assignee
-                              (:assignee opts))}}))
-
+  (let [opts (cond-> opts
+               assignee (assoc :assignee assignee))
+        response (jira-req opts
+                           :put
+                           (str "/rest/api/2/issue/" (:issue opts) "/assignee")
+                           {:json {:name (:assignee opts)}})
+        opts (or (-> response
+                     :errors
+                     vals
+                     (->> (reduce add-error opts)))
+                 opts)]
+    (-> opts
+        (show-errors)
+        (render-template "{{issue}} assigned to {{assignee}}"))))
 
 (defn $transition
   {:command 'transition

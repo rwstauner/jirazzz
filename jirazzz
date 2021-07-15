@@ -65,7 +65,9 @@
                                       'file read-file}}))
 
 
-(def config (-> config-file str slurp read-edn))
+(def config
+  (when (fs/exists? config-file)
+    (-> config-file str slurp read-edn)))
 
 
 (defn maybe-string

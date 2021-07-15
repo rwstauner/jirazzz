@@ -1,17 +1,30 @@
 {
+ ; URL prefix of your jira instance.
  :url "https://jira.example.com"
+ ; Any headers you want to add to requests (useful for auth).
  :headers {"Cookie" #file ".cookie.txt"}
+ ; The rapid-view / sprint board id.
  :rapid-view 123
+ ; Project key.
  :project "ABC"
+ ; Jira username (might be something like "flastname").
  :assignee #env USER
+ ; Type of issue to create.
  :issue-type "Task"
+ ; Pattern to look for in commit messages.  Should have single capture group.
  :issue-pattern "\\[([A-Z]+-[0-9]+)\\]"
+ ; A selmer template for how to add issue to commit messages.
  :commit-template "[{{issue}}] {{summary}}\n\n{{description}}"
+ ; Transition issue to this state.
  :transition "ready for review"
+ ; Values for defined custom fields.
  :storypoints 1
+ ; Aliases for custom fields so they are recognized by config/arguments.
  :custom-fields
  {
+  ; Sprint-id will be filled in with "current sprint".
   :sprint-id   :customfield_12345
+  ; Other fields can be specified on the command line or in config.
   :storypoints :customfield_10001
  }
 }

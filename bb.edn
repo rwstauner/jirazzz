@@ -5,7 +5,13 @@
              [tasks :as t])
   docs t/docs
   lint (shell "clj-kondo" "--lint" ".")
+  ; Check for changes so pre-commit will abort and changes can be added.
+  pre-commit {:depends [docs lint style:check]
+              :doc "A git pre-commit hook to check docs, style, etc"
+              :task (shell "git" "diff" "--exit-code" "README.md")}
   repl (shell "bb" "--nrepl-server" "54601")
   server (s/wait)
+  style:check (shell "cljstyle" "check")
+  style:fix (shell "cljstyle" "fix")
   test (do (s/start)
            (t/test *command-line-args*))}}

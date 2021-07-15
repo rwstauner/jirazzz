@@ -1,0 +1,8 @@
+; vim: set ft=clojure:
+{:rules
+ {:blank-lines
+  {:padding-lines 1 ; 2 between every fn seems excessive.
+   }
+  :comments
+  {:leading-prefix "" ; Don't change all comments to double semi-colons.
+   }}}

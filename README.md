@@ -112,4 +112,12 @@ To update the docs:
 
     bb docs
 
+
+## License
+
+Copyright © 2021 Randy Stauner
+
+Distributed under the Eclipse Public License version 1.0.
+
+
 [babashka]: https://babashka.org

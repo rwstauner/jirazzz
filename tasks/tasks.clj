@@ -1,7 +1,10 @@
 (ns tasks
+  (:refer-clojure :exclude [test])
   (:require
+    [babashka.fs :as fs]
     [clojure.java.shell :refer [sh]]
-    [clojure.string :as string]))
+    [clojure.string :as string]
+    [clojure.test :as t]))
 
 
 (defn jirazzz
@@ -46,3 +49,29 @@
       (placeholder "jirazzz help" (indent 4 (usage)))
       (placeholder "jirazzz example-config" (str "```clojure\n" (slurp "example-config.edn") "```"))
       (->> (spit readme))))
+
+
+(defn path->ns
+  [p]
+  (-> p
+      (string/replace #"^test/(.+?)\.clj$" "$1")
+      (string/replace #"/" ".")
+      (string/replace #"_" "-")
+      symbol))
+
+
+(def test-namespaces
+  (-> (fs/glob "test" "**_test.clj")
+      (->> (map (comp path->ns str)))))
+
+
+(defn test
+  []
+  (let [tests test-namespaces]
+    (doseq [t tests]
+      (require t))
+    (-> (apply t/run-tests tests)
+        (as-> result
+          (+ (:fail result) (:error result))
+          (if (> result 0) 1 0))
+        (System/exit))))

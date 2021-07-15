@@ -4,6 +4,7 @@
  {:requires ([server :as s]
              [tasks :as t])
   docs t/docs
+  lint (shell "clj-kondo" "--lint" ".")
   server (s/wait)
   test (do (s/start)
            (t/test))}}

@@ -101,10 +101,8 @@ by inspecting the response in your browser, or use jirazzz:
 
 ## Pronunciation
 
-Who cares.
-Call it "jira Z" or "jira Z's".
-I usually just say "jiras" in my head.
-
+It's a combination of "jira" and "💤" (it's a "rest" client).
+I call it "jira Z's".
 
 ## Development
 

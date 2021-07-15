@@ -1,6 +1,9 @@
 {
  :url "http://localhost:54646"
  :project "JZ"
+ :rapid-view 98
+ :issue-type "Task"
  :custom-fields
- {:sprint-id :customfield_12345}
+ {:sprint-id :customfield_12345
+  :acceptance-criteria :customfield_23456}
 }

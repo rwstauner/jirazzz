@@ -45,7 +45,8 @@
 (def jira-paths
   {:create "/rest/api/2/issue"
    :meta "/rest/api/2/issue/createmeta"
-   :sprint "/rest/greenhopper/1.0/sprintquery/98"})
+   :sprint "/rest/greenhopper/1.0/sprintquery/98"
+   :transitions "/rest/api/2/issue/JZ-123/transitions"})
 
 
 (def url "http://localhost:54646")
@@ -111,7 +112,16 @@
             {:sprints
              [{:id 1 :state "CLOSED"}
               {:id 2 :state "ACTIVE"}
-              {:id 3 :state "FUTURE?"}]})}})
+              {:id 3 :state "FUTURE?"}]})}
+   :transitions
+   {:match {:uri (:transitions jira-paths)}
+    :status 200
+    :headers {"content-type" "application/json"}
+    :body (json/generate-string
+            {:transitions
+             [{:id 1 :name "To Do"}
+              {:id 2 :name "Ready For Review"}
+              {:id 3 :name "Done"}]})}})
 
 
 (defn reset

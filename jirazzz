@@ -169,15 +169,15 @@
   [opts]
   (when (:rapid-view opts)
     (let [sprints (-> (jira-req opts :get (str "/rest/greenhopper/1.0/sprintquery/" (:rapid-view opts)))
-                    :sprints
-                    (->> (remove #(= (:state %) "CLOSED"))))
-        sprint-id (-> (or (-> sprints
-                              (->> (filter #(= (:state %) "ACTIVE")))
-                              first)
-                          (-> sprints
-                              first))
-                      :id)]
-    sprint-id)))
+                      :sprints
+                      (->> (remove #(= (:state %) "CLOSED"))))
+          sprint-id (-> (or (-> sprints
+                                (->> (filter #(= (:state %) "ACTIVE")))
+                                first)
+                            (-> sprints
+                                first))
+                        :id)]
+      sprint-id)))
 
 
 (defn get-meta
@@ -269,11 +269,11 @@
                       {})
            response (jira-req opts ~(keyword verb) path argmap)
            is-json? (some-> response
-                        (get-in [:headers :content-type])
-                        (->> (re-find #"/json")))]
+                            (get-in [:headers :content-type])
+                            (->> (re-find #"/json")))]
        (-> response
-                    (cond->
-                      is-json? (update :body parse-json))))))
+           (cond->
+             is-json? (update :body parse-json))))))
 
 
 (make-req-cmd get)

@@ -1,3 +1,6 @@
 {
  :url "http://localhost:54646"
+ :project "JZ"
+ :custom-fields
+ {:sprint-id :customfield_12345}
 }

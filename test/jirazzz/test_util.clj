@@ -32,6 +32,9 @@
        (map (fn [s] (if (symbol? s) (str s) s)))
        (apply list sh)))
 
+(def jira-paths
+  {:meta "/rest/api/2/issue/createmeta"})
+
 
 (def url "http://localhost:54646")
 

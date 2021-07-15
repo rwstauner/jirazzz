@@ -14,4 +14,9 @@
            (:exit r)))
     (is (re-find
           #"401 Unauthorized; Check the headers in your config."
-          (:err r)))))
+          (:err r))))
+  (is (= [{:uri (:meta tu/jira-paths)
+           :body nil
+           :query-string "projectKeys=JZ"}]
+         (tu/requests))
+      "only one request"))

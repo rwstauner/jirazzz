@@ -45,10 +45,10 @@
         (:err r)))
 
   ; FIXME
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}]
 
          (tu/requests))))
@@ -70,14 +70,14 @@
         (:err r)))
 
   ; FIXME
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
-          {:uri (:transitions tu/jira-paths)
+          {:uri (tu/jira-path :transitions)
            :method "get"}
-          {:uri (:transitions tu/jira-paths)
+          {:uri (tu/jira-path :transitions)
            :method "post"
            :body
            {:transition

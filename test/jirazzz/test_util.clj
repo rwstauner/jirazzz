@@ -3,7 +3,8 @@
     [babashka.fs :as fs]
     [cheshire.core :as json]
     [clojure.java.shell :refer [sh]]
-    [org.httpkit.client :as http]))
+    [org.httpkit.client :as http]
+    [selmer.parser :as selmer]))
 
 
 (def bb (-> (java.lang.ProcessHandle/current) .info .command .get))
@@ -44,13 +45,20 @@
 
 
 (def jira-paths
-  {:assignee "/rest/api/2/issue/JZ-123/assignee"
+  {:assignee "/rest/api/2/issue/{{issue}}/assignee"
    :create "/rest/api/2/issue"
-   :issue "/rest/api/2/issue/JZ-123"
+   :issue "/rest/api/2/issue/{{issue}}"
    :meta "/rest/api/2/issue/createmeta"
-   :sprint "/rest/greenhopper/1.0/sprintquery/98"
-   :transitions "/rest/api/2/issue/JZ-123/transitions"})
+   :sprint "/rest/greenhopper/1.0/sprintquery/{{rapid-view}}"
+   :transitions "/rest/api/2/issue/{{issue}}/transitions"})
 
+(defn jira-path
+  [k & [vars]]
+  (selmer/render
+    (get jira-paths k)
+    (merge {:rapid-view 98
+            :issue "JZ-123"}
+           vars)))
 
 (defn request
   [method path & kv]
@@ -88,14 +96,14 @@
 
 (def responses
   {:assignee
-   {:match {:uri (:assignee jira-paths)
+   {:match {:uri (jira-path :assignee)
             :body (json/generate-string
                     {:name "jzuser"})}
     :status 204
     :body ""}
 
    :assignee-unknown
-   {:match {:uri (:assignee jira-paths)
+   {:match {:uri (jira-path :assignee)
             :body (json/generate-string
                     {:name "bad-user"})}
     :headers {"content-type" "application/json"}
@@ -104,21 +112,21 @@
             {:errors {:assignee "User 'bad-user' does not exist."}})}
 
    :create
-   {:match {:uri (:create jira-paths)}
+   {:match {:uri (jira-path :create)}
     :status 204
     :headers {"content-type" "application/json"}
     :body (json/generate-string
             {:key "JZ-123"})}
 
    :issue
-   {:match {:uri (:issue jira-paths)}
+   {:match {:uri (jira-path :issue)}
     :status 200
     :headers {"content-type" "application/json"}
     :body (json/generate-string
             {:just "print it"})}
 
    :meta
-   {:match {:uri (:meta jira-paths)}
+   {:match {:uri (jira-path :meta)}
     :status 200
     :headers {"content-type" "application/json"}
     :body (json/generate-string
@@ -129,7 +137,7 @@
                [{:id 1 :name "Task"}
                 {:id 2 :name "Story"}]}]})}
    :sprint
-   {:match {:uri (:sprint jira-paths)}
+   {:match {:uri (jira-path :sprint)}
     :status 200
     :headers {"content-type" "application/json"}
     :body (json/generate-string
@@ -138,7 +146,7 @@
               {:id 2 :state "ACTIVE"}
               {:id 3 :state "FUTURE?"}]})}
    :transitions
-   {:match {:uri (:transitions jira-paths)}
+   {:match {:uri (jira-path :transitions)}
     :status 200
     :headers {"content-type" "application/json"}
     :body (json/generate-string

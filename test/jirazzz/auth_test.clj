@@ -17,7 +17,7 @@
            (-> r
                :err
                string/trim))))
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}]
          (tu/requests))

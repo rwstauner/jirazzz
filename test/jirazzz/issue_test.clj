@@ -21,12 +21,12 @@
         (:err r)))
 
   ; TODO: no need for get-meta
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
-          {:uri (:issue tu/jira-paths)
+          {:uri (tu/jira-path :issue)
            :method "get"}]
          (tu/requests))))
 
@@ -45,11 +45,11 @@
         (:err r)))
 
   ; TODO: no need for get-meta
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
-          {:uri (:issue tu/jira-paths)
+          {:uri (tu/jira-path :issue)
            :method "get"}]
          (tu/requests))))

@@ -62,44 +62,44 @@
           (:err r))))
 
   ; TODO: no need for get-meta
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
           {:uri "/none"
            :method "get"}
 
-          {:uri (:meta tu/jira-paths)
+          {:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
           {:uri "/any"
            :method "get"}
 
-          {:uri (:meta tu/jira-paths)
+          {:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
           {:uri "/any"
            :method "post"
            :body {:get 1}}
 
-          {:uri (:meta tu/jira-paths)
+          {:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
           {:uri "/any"
            :method "put"
            :body {:put 1}}
 
-          {:uri (:meta tu/jira-paths)
+          {:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
           {:uri "/any"
            :method "delete"}]

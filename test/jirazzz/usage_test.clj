@@ -57,10 +57,11 @@
                    (:err r))
           "displays usage")))
 
-  (is (= [{:uri (:meta tu/jira-paths)
+  ; FIXME
+  (is (= [{:uri (tu/jira-path :meta)
            :query-string "projectKeys=JZ"
            :method "get"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}]
          (tu/requests))
       "meta/sprint fetched before command is tried"))

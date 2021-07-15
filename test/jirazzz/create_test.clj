@@ -28,10 +28,10 @@
            (:out r))
         (:err r)))
 
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:create tu/jira-paths)
+          {:uri (tu/jira-path :create)
            :method "post"
            :body
            {:fields
@@ -60,12 +60,12 @@
            (:out r))
         (:err r)))
 
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
-          {:uri (:create tu/jira-paths)
+          {:uri (tu/jira-path :create)
            :method "post"
            :body
            {:fields
@@ -76,9 +76,9 @@
              :assignee {:name "-1"}
              :customfield_12345 2
              :customfield_23456 "whatever"}}}
-          {:uri (:transitions tu/jira-paths)
+          {:uri (tu/jira-path :transitions)
            :method "get"}
-          {:uri (:transitions tu/jira-paths)
+          {:uri (tu/jira-path :transitions)
            :method "post"
            :body
            {:transition

@@ -28,12 +28,12 @@
              (:out r))
           (:err r))))
 
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
-          {:uri (:create tu/jira-paths)
+          {:uri (tu/jira-path :create)
            :method "post"
            :body
            {:fields
@@ -44,9 +44,9 @@
              :assignee {:name "jzuser"}
              :customfield_12345 2
              :customfield_23456 nil}}}
-          {:uri (:transitions tu/jira-paths)
+          {:uri (tu/jira-path :transitions)
            :method "get"}
-          {:uri (:transitions tu/jira-paths)
+          {:uri (tu/jira-path :transitions)
            :method "post"
            :body
            {:transition
@@ -74,12 +74,12 @@
              (:out r))
           (:err r))))
 
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
-          {:uri (:create tu/jira-paths)
+          {:uri (tu/jira-path :create)
            :method "post"
            :body
            {:fields
@@ -149,22 +149,22 @@
             (:err r)))))
 
   ; FIXME
-  (is (= [{:uri (:meta tu/jira-paths)
+  (is (= [{:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
-          {:uri (:meta tu/jira-paths)
+          {:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
-          {:uri (:meta tu/jira-paths)
+          {:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
-          {:uri (:sprint tu/jira-paths)
+          {:uri (tu/jira-path :sprint)
            :method "get"}
-          {:uri (:create tu/jira-paths)
+          {:uri (tu/jira-path :create)
            :method "post"
            :body
            {:fields

@@ -23,6 +23,7 @@
 
 (def script (file "jirazzz"))
 
+(def url "http://localhost:54646")
 
 (def ^:dynamic *test-config*
   (file "test" "config.edn"))
@@ -38,7 +39,8 @@
   [& args]
   (->> (concat [bb script]
                (map str args)
-               [:env {"JIRAZZZ_CONFIG_FILE" `*test-config*}])
+               [:env {"JIRAZZZ_CONFIG_FILE" `*test-config*
+                      "JIRAZZZ_TEST_URL" url}])
        (apply list sh)))
 
 
@@ -47,9 +49,6 @@
    :meta "/rest/api/2/issue/createmeta"
    :sprint "/rest/greenhopper/1.0/sprintquery/98"
    :transitions "/rest/api/2/issue/JZ-123/transitions"})
-
-
-(def url "http://localhost:54646")
 
 
 (defn request

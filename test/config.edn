@@ -1,5 +1,5 @@
 {
- :url "http://localhost:54646"
+ :url #env JIRAZZZ_TEST_URL
  :project "JZ"
  :rapid-view 98
  :issue-type "Task"

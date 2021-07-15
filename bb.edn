@@ -24,5 +24,7 @@
   server s/run
   style:check (shell "cljstyle" "check")
   style:fix (shell "cljstyle" "fix")
-  test (do (s/start)
-           (t/test *command-line-args*))}}
+  test {:doc "Run test suite with fake http server"
+        :task (do
+                (s/start)
+                (t/test *command-line-args*))}}}

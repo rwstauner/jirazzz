@@ -158,7 +158,8 @@
 
 (defn get-sprint-id
   [opts]
-  (let [sprints (-> (jira-req opts :get (str "/rest/greenhopper/1.0/sprintquery/" (:rapid-view opts)))
+  (when (:rapid-view opts)
+    (let [sprints (-> (jira-req opts :get (str "/rest/greenhopper/1.0/sprintquery/" (:rapid-view opts)))
                     :sprints
                     (->> (remove #(= (:state %) "CLOSED"))))
         sprint-id (-> (or (-> sprints
@@ -167,7 +168,7 @@
                           (-> sprints
                               first))
                       :id)]
-    sprint-id))
+    sprint-id)))
 
 
 (defn get-meta

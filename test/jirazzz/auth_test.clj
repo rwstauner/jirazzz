@@ -1,5 +1,6 @@
 (ns jirazzz.auth-test
   (:require
+    [clojure.string :as string]
     [clojure.test :refer [deftest is] :as t]
     [jirazzz.test-util :refer [jirazzz] :as tu]))
 
@@ -12,9 +13,10 @@
   (let [r (jirazzz create --summary "hi there" --description "meh")]
     (is (= 1
            (:exit r)))
-    (is (re-find
-          #"401 Unauthorized; Check the headers in your config."
-          (:err r))))
+    (is (= "401 Unauthorized; Check the headers in your config."
+           (-> r
+               :err
+               string/trim))))
   (is (= [{:uri (:meta tu/jira-paths)
            :body nil
            :query-string "projectKeys=JZ"}]

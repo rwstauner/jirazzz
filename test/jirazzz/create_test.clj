@@ -17,6 +17,7 @@
             (jirazzz create
                      --url "http://localhost:54646"
                      --project "JZ"
+                     --assignee "me"
                      --issue-type "Task"
                      --summary "hi there"
                      --description "meh"))]
@@ -38,7 +39,7 @@
              :description "meh"
              :project {:id 123456}
              :issuetype {:id 1}
-             :assignee {:name "-1"}}}}]
+             :assignee {:name "me"}}}}]
          (tu/requests))))
 
 (deftest everything

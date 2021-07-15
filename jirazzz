@@ -435,7 +435,7 @@
 
 
 (defn -main
-  [& args]
+  [args]
   (try
     (let [[cmd opts args] (parse-args args)]
       (->> (apply cmd opts args)
@@ -451,4 +451,4 @@
         (throw e)))))
 
 
-(apply -main *command-line-args*)
+(-main *command-line-args*)

@@ -40,11 +40,11 @@ your own cookie (see "Example Config" below).
           --backlog               Put isue in backlog instead of current sprint
           --description DESC      Issue description
       -i, --issue KEY             Issue Key
+          --issue-type TYPE       Issue Type
       -p, --project PROJECT       Project for issue creation
           --rapid-view ID         RapidView id
           --summary SUMMARY       Issue summary
           --transition NAME       Transition issue to this state
-          --type TYPE             Issue Type
           --url URL               Jira URL
           --input-format FORMAT   Set input format (can be 'json', default is 'edn')
           --output-format FORMAT  Set output format (can be 'json', default is 'edn')

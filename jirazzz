@@ -362,11 +362,11 @@
      [nil  "--backlog" "Put isue in backlog instead of current sprint"]
      [nil  "--description DESC" "Issue description"]
      ["-i" "--issue KEY" "Issue Key"]
+     [nil  "--issue-type TYPE" "Issue Type"]
      ["-p" "--project PROJECT" "Project for issue creation"]
      [nil  "--rapid-view ID" "RapidView id"]
      [nil  "--summary SUMMARY" "Issue summary"]
      [nil  "--transition NAME" "Transition issue to this state"]
-     [nil  "--type TYPE" "Issue Type"]
      [nil  "--url URL" "Jira URL"]
 
      [nil  "--input-format FORMAT" "Set input format (can be 'json', default is 'edn')"

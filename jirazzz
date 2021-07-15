@@ -40,14 +40,24 @@
       (fs/path HOME ".jirazzz.edn")))
 
 
-(defn relative-to-home
+(def config-dir
+  (-> config-file
+      fs/parent
+      str
+      (as-> s
+        (if (string/blank? s)
+          "."
+          s))))
+
+
+(defn relative-to-config
   [p]
   (cond->> p
-    (fs/relative? p) (fs/path HOME)))
+    (fs/relative? p) (fs/path config-dir)))
 
 
 (def read-file
-  (comp string/trim slurp str relative-to-home))
+  (comp string/trim slurp str relative-to-config))
 
 
 (def read-edn

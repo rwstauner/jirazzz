@@ -43,6 +43,7 @@
 
 
 (defn docs
+  "Regenerate docs"
   []
   (-> readme
       slurp
@@ -66,6 +67,7 @@
 
 
 (defn test
+  "Run test suite"
   [patterns]
   (let [tests (cond-> test-namespaces
                 (seq patterns)

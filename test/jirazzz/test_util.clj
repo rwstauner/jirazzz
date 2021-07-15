@@ -39,17 +39,10 @@
 (def url "http://localhost:54646")
 
 
-(defn read-body
-  [b]
-  (when b
-    (if (string? b)
-      b
-      (slurp b))))
-
-
 (defn request
   [method path & kv]
-  @(http/request (merge {:method method
+  @(http/request (merge {:as :text
+                         :method method
                          :url (str url path)}
                         (apply hash-map kv))))
 

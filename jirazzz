@@ -132,7 +132,8 @@
                      ->json)
         headers (cond-> (:headers opts)
                   json (assoc "Content-type" "application/json; charset=utf-8"))
-        req (merge {:url (jira-url opts path)
+        req (merge {:as :text
+                    :url (jira-url opts path)
                     :method method
                     :headers headers
                     :body json}

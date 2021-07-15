@@ -7,7 +7,7 @@
 (t/use-fixtures :each tu/with-server-reset)
 
 
-(def status+body (juxt :status (comp tu/read-body :body)))
+(def status+body (juxt :status :body))
 
 
 (deftest sanity

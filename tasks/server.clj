@@ -21,11 +21,17 @@
 
 (defn respond
   [{:keys [log?]} req]
-  (swap! requests conj (select-keys req [:uri
-                                         :method
-                                         :body
-                                         :path
-                                         :query-string]))
+  (swap! requests
+         conj
+         (-> (select-keys req [:uri
+                               :method
+                               :body
+                               :query-string])
+             (assoc :method (:request-method req))
+             (->> (remove #(or (nil? (second %))
+                               (= "" (second %))))
+                  (map vec)
+                  (into {}))))
   (loop [rs @responses]
     (if-let [r (first rs)]
       (let [match (-> r
@@ -65,8 +71,11 @@
                    json/generate-string)}
 
         :else
-        (respond opts req)))
+        (respond opts (cond-> req
+                        (not (nil? body))
+                        (update :body slurp)))))
     {:port port}))
+
 
 (defn wait
   []

@@ -18,7 +18,7 @@
                :err
                string/trim))))
   (is (= [{:uri (:meta tu/jira-paths)
-           :body nil
+           :method "get"
            :query-string "projectKeys=JZ"}]
          (tu/requests))
       "only one request"))

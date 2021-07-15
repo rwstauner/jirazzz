@@ -20,9 +20,10 @@
          (-> (tu/request :get "/bar")
              status+body)))
 
-  (is (= [{:uri "/foo" :body nil :query-string nil}
-          {:uri "/bar" :body nil :query-string nil}]
-         (-> (tu/requests))))
+  (is (= [{:method "get" :uri "/foo"}
+          {:method "get" :uri "/bar"}]
+         (-> (tu/requests)))
+      "basic")
 
   (tu/reset)
 
@@ -44,8 +45,19 @@
          (-> (tu/request :get "/hoge")
              status+body)))
 
-  (is (= [{:uri "/baz" :body nil :query-string nil}
-          {:uri "/qux" :body nil :query-string nil}
-          {:uri "/hoge" :body nil :query-string "q=1"}
-          {:uri "/hoge" :body nil :query-string nil}]
+  (tu/respond {:match {:uri "/piyo" :body "👋"}
+               :body "👌" :status 204})
+  (is (= [204 "👌"]
+         (-> (tu/request :post "/piyo" :body "👋")
+             status+body)))
+  (is (= [404 ""]
+         (-> (tu/request :post "/piyo" :body "x")
+             status+body)))
+
+  (is (= [{:method "get"  :uri "/baz"}
+          {:method "get"  :uri "/qux"}
+          {:method "get"  :uri "/hoge" :query-string "q=1"}
+          {:method "get"  :uri "/hoge"}
+          {:method "post" :uri "/piyo" :body "👋"}
+          {:method "post" :uri "/piyo" :body "x"}]
          (-> (tu/requests)))))

@@ -372,12 +372,11 @@
     (-> config
         :custom-fields
         (or {})
-        (keys)
-        (->> (map name))
-        (->> (map (fn [k]
-                    [nil
-                     (str "--" k " VALUE")
-                     (str "Set custom field for " k)]))))))
+        (->> (map (fn [[k v]]
+                    (let [k (name k)]
+                      [nil
+                       (str "--" k " VALUE")
+                       (str "Set custom field for " k " (" (name v) ")")])))))))
 
 
 (defn commands

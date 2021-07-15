@@ -29,7 +29,9 @@
 ; config
 (defn env
   [k]
-  (System/getenv k))
+  (-> k
+      str
+      System/getenv))
 
 
 (def HOME (env "HOME"))

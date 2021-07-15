@@ -292,7 +292,8 @@
   (-> opts
       (cond->
         to (assoc :transition to))
-      transition))
+      transition
+      (render-template "{{issue}} moved to {{transition}}")))
 
 
 (defn create

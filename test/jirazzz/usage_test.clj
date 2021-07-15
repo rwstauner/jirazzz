@@ -1,5 +1,6 @@
 (ns jirazzz.usage-test
   (:require
+    [clojure.string :as string]
     [clojure.test :refer [deftest testing is] :as t]
     [jirazzz.test-util :refer [jirazzz] :as tu]))
 
@@ -9,11 +10,28 @@
 
 (deftest usage
   (testing "help"
-    (let [r (jirazzz --help)]
+    (let [r (jirazzz --help)
+          out (:err r)]
       (is (= 0
              (:exit r)))
       (is (re-find #"^Usage: jirazzz command.+"
-                   (:err r)))))
+                   out))
+      (is (= (-> (re-find #"(?ms:^Commands:\n\n(.+?)\n\n)" out)
+                 second
+                 (string/split-lines)
+                 (->> (map #(-> (re-find #"^\s+(\S+)\s+" %)
+                                second))))
+             ["assign"
+              "commit-msg"
+              "create"
+              "issue"
+              "parse-log"
+              "transition"
+              "get"
+              "post"
+              "put"
+              "delete"])
+          "documents commands in ranked order")))
 
   (testing "bad opts"
     (let [r (jirazzz create --thing)]

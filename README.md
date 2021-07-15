@@ -112,6 +112,10 @@ To update the docs:
 
     bb docs
 
+To run the tests:
+
+    bb test
+
 
 ## License
 

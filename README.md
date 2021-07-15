@@ -106,13 +106,24 @@ I call it "jira Z's".
 
 ## Development
 
-To update the docs:
+Try `bb tasks` to see a list of babashka tasks useful for development:
 
-    bb docs
+<!-- { jirazzz bb tasks -->
 
-To run the tests:
+    The following tasks are available:
 
-    bb test
+    docs        Regenerate docs
+    lint
+    nrepl       Start nrepl server for editor integration
+    pre-commit  A git pre-commit hook to check docs, style, etc
+    server      Run fake http server for manual testing
+    style:check
+    style:fix
+    test        Run test suite with fake http server
+
+
+<!-- jirazzz bb tasks } -->
+
 
 
 ## License

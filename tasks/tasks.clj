@@ -19,6 +19,10 @@
   [n s]
   (string/replace s #"(?m:^)" (string/join "" (repeat n " "))))
 
+(defn clean-string
+  [s]
+  (string/replace s #"(?m: +$)" ""))
+
 
 (defn placeholder
   [s marker replacement]
@@ -26,7 +30,7 @@
         s
         (re-pattern
           (str "(?s:(<!-- \\{ " marker " -->).+(<!-- " marker " \\} -->))"))
-        (str "$1\n\n" (string/re-quote-replacement replacement) "\n\n$2"))
+        (str "$1\n\n" (string/re-quote-replacement (clean-string replacement)) "\n\n$2"))
       (string/split-lines)
       (->> (map #(string/replace % #"^\s+$" ""))
            (string/join "\n"))
@@ -49,6 +53,7 @@
       slurp
       (placeholder "jirazzz help" (indent 4 (usage)))
       (placeholder "jirazzz example-config" (str "```clojure\n" (slurp "example-config.edn") "```"))
+      (placeholder "jirazzz bb tasks" (indent 4 (:out (sh "bb" "tasks"))))
       (->> (spit readme))))
 
 

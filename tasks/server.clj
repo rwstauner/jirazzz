@@ -1,6 +1,7 @@
 (ns server
   (:require
     [cheshire.core :as json]
+    [clojure.edn :as edn]
     [clojure.walk :as walk]
     [org.httpkit.server :as server]))
 
@@ -58,7 +59,7 @@
       (cond
         (= uri "/respond")
         (do
-          (add-responder (json/parse-string (slurp body) true))
+          (add-responder (edn/read-string (slurp body)))
           {:status 204})
 
         (= uri "/reset")

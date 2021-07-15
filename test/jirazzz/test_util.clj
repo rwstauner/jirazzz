@@ -64,7 +64,7 @@
   [opts]
   (request :post "/respond"
            :headers {"content-type" "application/json"}
-           :body (json/generate-string opts)))
+           :body (pr-str opts)))
 
 
 (defn parse-body

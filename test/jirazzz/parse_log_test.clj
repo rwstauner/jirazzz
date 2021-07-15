@@ -57,15 +57,17 @@
   (tu/respond (:meta tu/responses))
   (tu/respond (:sprint tu/responses))
   (tu/respond (:transitions tu/responses))
+  (tu/respond (-> (:transitions tu/responses)
+                  (assoc-in [:match :uri] (tu/jira-path :transitions {:issue "JZ-124"}))))
 
   (let [r (jirazzz parse-log
                    --transition "done"
                    --assignee jzuser
-                   :in (git-log "foo\n\ncloses JZ-123" "bar\nbaz"))]
+                   :in (git-log "foo\n\ncloses JZ-123" "bar\nbaz" "none" "[JZ-124] subject\n\ndesc"))]
     (is (= 0
            (:exit r))
         (:err r))
-    (is (= "JZ-123 transitioned to done\n"
+    (is (= "JZ-123 transitioned to done\nJZ-124 transitioned to done\n"
            (:out r))
         (:err r)))
 
@@ -78,6 +80,13 @@
           {:uri (tu/jira-path :transitions)
            :method "get"}
           {:uri (tu/jira-path :transitions)
+           :method "post"
+           :body
+           {:transition
+            {:id 3}}}
+          {:uri (tu/jira-path :transitions {:issue "JZ-124"})
+           :method "get"}
+          {:uri (tu/jira-path :transitions {:issue "JZ-124"})
            :method "post"
            :body
            {:transition

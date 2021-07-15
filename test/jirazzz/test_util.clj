@@ -157,3 +157,17 @@
   [f]
   (reset)
   (f))
+
+(defmacro with-temp-files
+  [binds & body]
+  `(let ~(->> binds
+              (partition 2)
+              (mapcat (fn [[bind suffix]]
+                        [bind
+                         (list 'java.io.File/createTempFile "jirazzz." suffix)]))
+              vec)
+     (try
+       ~@body
+       (finally
+         (doseq [tmp# ~(vec (take-nth 2 binds))]
+           (~'.delete tmp#))))))

@@ -35,22 +35,24 @@ your own cookie (see "Example Config" below).
     can also be set in the config file or on the command line (see below).
 
     Options:
-      -h, --help                  Show usage
-          --assignee USERNAME     Assign issue to username (-1 for unassigned)
-          --backlog               Put isue in backlog instead of current sprint
-          --description DESC      Issue description
-      -i, --issue KEY             Issue Key
-          --issue-type TYPE       Issue Type
-      -p, --project PROJECT       Project for issue creation
-          --rapid-view ID         RapidView id
-          --summary SUMMARY       Issue summary
-          --transition NAME       Transition issue to this state
-          --unassigned            Set issue as Unassigned
-          --url URL               Jira URL
-          --input-format FORMAT   Set input format (can be 'json', default is 'edn')
-          --output-format FORMAT  Set output format (can be 'json', default is 'edn')
-          --sprint-id VALUE       Set custom field for sprint-id (customfield_12345)
-          --storypoints VALUE     Set custom field for storypoints (customfield_10001)
+      -h, --help                      Show usage
+          --assignee USERNAME         Assign issue to username (-1 for unassigned)
+          --backlog                   Put isue in backlog instead of current sprint
+          --commit-template TEMPLATE  Selmer template for adding issue to commit message
+          --description DESC          Issue description
+      -i, --issue KEY                 Issue Key
+          --issue-pattern PATTERN     Regular Expression to find issue in commit message
+          --issue-type TYPE           Issue Type
+      -p, --project PROJECT           Project for issue creation
+          --rapid-view ID             RapidView id
+          --summary SUMMARY           Issue summary
+          --transition NAME           Transition issue to this state
+          --unassigned                Set issue as Unassigned
+          --url URL                   Jira URL
+          --input-format FORMAT       Set input format (can be 'json', default is 'edn')
+          --output-format FORMAT      Set output format (can be 'json', default is 'edn')
+          --sprint-id VALUE           Set custom field for sprint-id (customfield_12345)
+          --storypoints VALUE         Set custom field for storypoints (customfield_10001)
 
 
 <!-- jirazzz help } -->

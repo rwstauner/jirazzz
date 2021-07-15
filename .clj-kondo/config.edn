@@ -2,4 +2,6 @@
  {:unresolved-symbol
   {:exclude [(jirazzz.test-util/jirazzz)]}
  }
+ :lint-as
+ {jirazzz.test-util/with-temp-files clojure.core/let}
 }

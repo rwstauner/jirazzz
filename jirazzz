@@ -352,11 +352,12 @@
             opts (create-issue opts)
             template (-> opts
                          :commit-template
-                         (or "{{summary}}\n\ncloses {{issue}}\n\n{{description}}"))]
+                         (or "{{summary}}\n\ncloses {{issue}}\n\n{{description}}\n"))]
         (if-not (:issue opts)
           (warn (:errors opts))
           (spit path
-                (render-template opts template)))))))
+                (render-template opts template)))))
+    ""))
 
 
 (defn parse-log
@@ -380,8 +381,10 @@
 
      [nil  "--assignee USERNAME" "Assign issue to username (-1 for unassigned)"]
      [nil  "--backlog" "Put isue in backlog instead of current sprint"]
+     [nil  "--commit-template TEMPLATE" "Selmer template for adding issue to commit message"]
      [nil  "--description DESC" "Issue description"]
      ["-i" "--issue KEY" "Issue Key"]
+     [nil  "--issue-pattern PATTERN" "Regular Expression to find issue in commit message"]
      [nil  "--issue-type TYPE" "Issue Type"]
      ["-p" "--project PROJECT" "Project for issue creation"]
      [nil  "--rapid-view ID" "RapidView id"]

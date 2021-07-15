@@ -1,0 +1,5 @@
+{:linters
+ {:unresolved-symbol
+  {:exclude [(jirazzz.test-util/jirazzz)]}
+ }
+}

@@ -6,6 +6,32 @@
     [org.httpkit.client :as http]))
 
 
+(def bb (-> (java.lang.ProcessHandle/current) .info .command .get))
+
+
+(def root
+  (-> *file*
+      fs/parent
+      fs/parent
+      fs/parent))
+
+
+(defn file
+  [& args]
+  (str (apply fs/path root args)))
+
+
+(def script (file "jirazzz"))
+
+(def test-config (file "test" "config.edn"))
+
+
+(defmacro jirazzz
+  [& args]
+  (->> (concat [bb script] args [:env {"JIRAZZZ_CONFIG_FILE" test-config}])
+       (map (fn [s] (if (symbol? s) (str s) s)))
+       (apply list sh)))
+
 
 (def url "http://localhost:54646")
 

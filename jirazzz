@@ -138,9 +138,9 @@
                     :body json}
                    (dissoc req-opts :json))
         response @(http/request req)
-        is-json? (-> response
-                     (get-in [:headers :content-type])
-                     (->> (re-find #"/json")))]
+        is-json? (some-> response
+                         (get-in [:headers :content-type])
+                         (->> (re-find #"/json")))]
     (when (= 401 (:status response))
       (throw (ex-info "401 Unauthorized; Check the headers in your config."
                       (select-keys response [:status]))))
@@ -444,7 +444,9 @@
       (if (-> e
               ex-data
               :status)
-        (println (.getMessage e))
+        (do
+          (warn (.getMessage e))
+          (exit 1))
         (throw e)))))
 
 

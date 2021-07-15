@@ -5,6 +5,7 @@
              [tasks :as t])
   docs t/docs
   lint (shell "clj-kondo" "--lint" ".")
+  repl (shell "bb" "--nrepl-server" "54601")
   server (s/wait)
   test (do (s/start)
            (t/test *command-line-args*))}}

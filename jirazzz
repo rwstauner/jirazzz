@@ -141,6 +141,9 @@
         is-json? (-> response
                      (get-in [:headers :content-type])
                      (->> (re-find #"/json")))]
+    (when (= 401 (:status response))
+      (throw (ex-info "401 Unauthorized; Check the headers in your config."
+                      (select-keys response [:status]))))
     (-> response
         :body
         maybe-string
@@ -432,10 +435,17 @@
 
 (defn -main
   [& args]
-  (let [[cmd opts args] (parse-args args)]
-    (->> (apply cmd opts args)
-         (->string opts)
-         println)))
+  (try
+    (let [[cmd opts args] (parse-args args)]
+      (->> (apply cmd opts args)
+           (->string opts)
+           println))
+    (catch Exception e
+      (if (-> e
+              ex-data
+              :status)
+        (println (.getMessage e))
+        (throw e)))))
 
 
 (apply -main *command-line-args*)

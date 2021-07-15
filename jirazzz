@@ -97,10 +97,12 @@
 
 (defn ->string
   [opts v]
-  (let [f (case (:output-format opts)
-            :json ->json
-            pr-str)]
-    (f v)))
+  (if (string? v)
+    v
+    (let [f (case (:output-format opts)
+              :json ->json
+              pr-str)]
+      (f v))))
 
 
 (def ->nil (constantly nil))

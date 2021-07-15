@@ -424,6 +424,9 @@
     (when (-> parsed :options :help)
       (warn (usage parsed))
       (exit 0))
+    (when-not (empty? (:errors parsed))
+      (warn (usage parsed))
+      (exit 1))
     (when-not cmd
       (when cmdname
         (warn "Unknown command: " cmdname))
@@ -441,6 +444,11 @@
       (->> (apply cmd opts args)
            (->string opts)
            println))
+    ; ArityException likely means too many args passed to command fn.
+    (catch clojure.lang.ArityException _
+      (warn "Invalid arguments: " args)
+      (warn (usage (cli/parse-opts args cli-options)))
+      (exit 1))
     (catch Exception e
       (if (-> e
               ex-data

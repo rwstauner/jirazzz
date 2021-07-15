@@ -14,7 +14,44 @@ your own cookie (see "Example Config" below).
     jirazzz --help
 
 <!-- { jirazzz help -->
-...
+
+    Usage: jirazzz command [options]
+
+    Commands:
+
+      assign       Set assignee on issue: jirazzz assign --issue ABC-123 username
+      commit-msg   Create issue from commit msg if no reference exists
+      create       Create issue: jirazzz create --summary … --description …
+      issue        Get issue: jirazzz issue KEY
+      parse-log    Parse commit log and transition referenced issues
+      transition   Transition issue: jirazzz transition --issue ABC-123 --transition 'done'
+      get          Send GET    request: jirazzz get    /rest/api/x/y/z …
+      post         Send POST   request: jirazzz post   /rest/api/x/y/z …
+      put          Send PUT    request: jirazzz put    /rest/api/x/y/z …
+      delete       Send DELETE request: jirazzz delete /rest/api/x/y/z …
+
+    Options can be specified on the command line or in example-config.edn
+    Any aliases defined in {:custom-fields {:your-name :customfield_00000}}
+    can also be set in the config file or on the command line (see below).
+
+    Options:
+      -h, --help                  Show usage
+          --assignee USERNAME     Assign issue to username (-1 for unassigned)
+          --backlog               Put isue in backlog instead of current sprint
+          --description DESC      Issue description
+      -i, --issue KEY             Issue Key
+      -p, --project PROJECT       Project for issue creation
+          --rapid-view ID         RapidView id
+          --summary SUMMARY       Issue summary
+          --transition NAME       Transition issue to this state
+          --type TYPE             Issue Type
+          --url URL               Jira URL
+          --input-format FORMAT   Set input format (can be 'json', default is 'edn')
+          --output-format FORMAT  Set output format (can be 'json', default is 'edn')
+          --sprint-id VALUE       Set custom field for sprint-id (customfield_12345)
+          --storypoints VALUE     Set custom field for storypoints (customfield_10001)
+
+
 <!-- jirazzz help } -->
 
 
@@ -25,7 +62,25 @@ An alternate can be specified with env var `JIRAZZZ_CONFIG_FILE`.
 
 <!-- { jirazzz example-config -->
 
-...
+```clojure
+{
+ :url "https://jira.example.com"
+ :headers {"Cookie" #file ".cookie.txt"}
+ :rapid-view 123
+ :project "ABC"
+ :assignee #env USER
+ :issue-type "Task"
+ :issue-pattern "\\[([A-Z]+-[0-9]+)\\]"
+ :commit-template "[{{issue}}] {{summary}}\n\n{{description}}"
+ :transition "ready for review"
+ :storypoints 1
+ :custom-fields
+ {
+  :sprint-id   :customfield_12345
+  :storypoints :customfield_10001
+ }
+}
+```
 
 <!-- jirazzz example-config } -->
 

@@ -1,0 +1,17 @@
+{
+ :url "https://jira.example.com"
+ :headers {"Cookie" #file ".cookie.txt"}
+ :rapid-view 123
+ :project "ABC"
+ :assignee #env USER
+ :issue-type "Task"
+ :issue-pattern "\\[([A-Z]+-[0-9]+)\\]"
+ :commit-template "[{{issue}}] {{summary}}\n\n{{description}}"
+ :transition "ready for review"
+ :storypoints 1
+ :custom-fields
+ {
+  :sprint-id   :customfield_12345
+  :storypoints :customfield_10001
+ }
+}

@@ -22,13 +22,7 @@
            (:out r))
         (:err r)))
 
-  (is (= [{:uri (tu/jira-path :meta)
-           :method "get"
-           :query-string "projectKeys=JZ"}
-          ; TODO don't get sprint if we aren't going to use it.
-          {:uri (tu/jira-path :sprint)
-           :method "get"}
-          {:uri (tu/jira-path :assignee)
+  (is (= [{:uri (tu/jira-path :assignee)
            :method "put"
            :body {:name "jzuser"}}]
          (tu/requests))))
@@ -48,13 +42,7 @@
            (:err r))
         (:out r)))
 
-  (is (= [{:uri (tu/jira-path :meta)
-           :method "get"
-           :query-string "projectKeys=JZ"}
-          ; TODO don't get sprint if we aren't going to use it.
-          {:uri (tu/jira-path :sprint)
-           :method "get"}
-          {:uri (tu/jira-path :assignee)
+  (is (= [{:uri (tu/jira-path :assignee)
            :method "put"
            :body {:name "bad-user"}}]
          (tu/requests))))
@@ -73,13 +61,7 @@
            (:out r))
         (:err r)))
 
-  (is (= [{:uri (tu/jira-path :meta)
-           :method "get"
-           :query-string "projectKeys=JZ"}
-          ; TODO don't get sprint if we aren't going to use it.
-          {:uri (tu/jira-path :sprint)
-           :method "get"}
-          {:uri (tu/jira-path :assignee)
+  (is (= [{:uri (tu/jira-path :assignee)
            :method "put"
            :body {:name "-1"}}]
          (tu/requests))))

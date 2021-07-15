@@ -22,13 +22,7 @@
            (:out r))
         (:err r)))
 
-  (is (= [{:uri (tu/jira-path :meta)
-           :method "get"
-           :query-string "projectKeys=JZ"}
-          ; TODO don't get sprint if we aren't going to use it.
-          {:uri (tu/jira-path :sprint)
-           :method "get"}
-          {:uri (tu/jira-path :transitions)
+  (is (= [{:uri (tu/jira-path :transitions)
            :method "get"}
           {:uri (tu/jira-path :transitions)
            :method "post"
@@ -52,12 +46,6 @@
            (:err r))
         (:out r)))
 
-  (is (= [{:uri (tu/jira-path :meta)
-           :method "get"
-           :query-string "projectKeys=JZ"}
-          ; TODO don't get sprint if we aren't going to use it.
-          {:uri (tu/jira-path :sprint)
-           :method "get"}
-          {:uri (tu/jira-path :transitions)
+  (is (= [{:uri (tu/jira-path :transitions)
            :method "get"}]
          (tu/requests))))

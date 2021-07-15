@@ -148,18 +148,7 @@
                (:out r))
             (:err r)))))
 
-  ; FIXME
   (is (= [{:uri (tu/jira-path :meta)
-           :method "get"
-           :query-string "projectKeys=JZ"}
-          {:uri (tu/jira-path :sprint)
-           :method "get"}
-          {:uri (tu/jira-path :meta)
-           :method "get"
-           :query-string "projectKeys=JZ"}
-          {:uri (tu/jira-path :sprint)
-           :method "get"}
-          {:uri (tu/jira-path :meta)
            :method "get"
            :query-string "projectKeys=JZ"}
           {:uri (tu/jira-path :sprint)

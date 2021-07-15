@@ -235,7 +235,8 @@
 
 (defn create-issue
   [opts]
-  (let [response (jira-req
+  (let [opts (merge (get-meta opts) opts)
+        response (jira-req
                    opts
                    :post
                    "/rest/api/2/issue"
@@ -466,8 +467,7 @@
         (warn "Unknown command: " cmdname))
       (warn (usage parsed))
       (exit 1))
-    (let [opts (merge config (:options parsed))
-          opts (merge (get-meta opts) opts)]
+    (let [opts (merge config (:options parsed))]
       [cmd opts args])))
 
 

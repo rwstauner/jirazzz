@@ -44,14 +44,9 @@
            (:out r))
         (:err r)))
 
-  ; FIXME
-  (is (= [{:uri (tu/jira-path :meta)
-           :method "get"
-           :query-string "projectKeys=JZ"}
-          {:uri (tu/jira-path :sprint)
-           :method "get"}]
-
-         (tu/requests))))
+  (is (= []
+         (tu/requests))
+      "no requests"))
 
 (deftest issues
   (tu/respond (:meta tu/responses))
@@ -71,13 +66,7 @@
            (:out r))
         (:err r)))
 
-  ; FIXME
-  (is (= [{:uri (tu/jira-path :meta)
-           :method "get"
-           :query-string "projectKeys=JZ"}
-          {:uri (tu/jira-path :sprint)
-           :method "get"}
-          {:uri (tu/jira-path :transitions)
+  (is (= [{:uri (tu/jira-path :transitions)
            :method "get"}
           {:uri (tu/jira-path :transitions)
            :method "post"

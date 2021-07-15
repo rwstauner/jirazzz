@@ -88,8 +88,8 @@ Most fields in the config file can be overridden via command line arguments
 (see usage output).
 
 Available readers:
-    - `#env` - Substitute an environment variable
-    - `#file` - Read file (relative to config file directory)
+- `#env` - Substitute an environment variable
+- `#file` - Read file (relative to config file directory)
 
 Need to figure out your custom fields?
 

@@ -79,7 +79,8 @@
     {:port port}))
 
 
-(defn wait
+(defn run
+  "Run fake http server for manual testing"
   []
   (start {:log? true})
   @(promise))

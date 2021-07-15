@@ -21,7 +21,7 @@
   pre-commit {:depends [docs lint style:check]
               :doc "A git pre-commit hook to check docs, style, etc"
               :task (shell "git" "diff" "--exit-code" "README.md")}
-  server (s/wait)
+  server s/run
   style:check (shell "cljstyle" "check")
   style:fix (shell "cljstyle" "fix")
   test (do (s/start)

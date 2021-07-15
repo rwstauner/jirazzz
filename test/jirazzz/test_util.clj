@@ -44,7 +44,8 @@
 
 
 (def jira-paths
-  {:create "/rest/api/2/issue"
+  {:assignee "/rest/api/2/issue/JZ-123/assignee"
+   :create "/rest/api/2/issue"
    :meta "/rest/api/2/issue/createmeta"
    :sprint "/rest/greenhopper/1.0/sprintquery/98"
    :transitions "/rest/api/2/issue/JZ-123/transitions"})
@@ -85,7 +86,23 @@
 
 
 (def responses
-  {:create
+  {:assignee
+   {:match {:uri (:assignee jira-paths)
+            :body (json/generate-string
+                    {:name "jzuser"})}
+    :status 204
+    :body ""}
+
+   :assignee-unknown
+   {:match {:uri (:assignee jira-paths)
+            :body (json/generate-string
+                    {:name "bad-user"})}
+    :headers {"content-type" "application/json"}
+    :status 400
+    :body (json/generate-string
+            {:errors {:assignee "User 'bad-user' does not exist."}})}
+
+   :create
    {:match {:uri (:create jira-paths)}
     :status 204
     :headers {"content-type" "application/json"}

@@ -45,6 +45,7 @@ your own cookie (see "Example Config" below).
           --rapid-view ID         RapidView id
           --summary SUMMARY       Issue summary
           --transition NAME       Transition issue to this state
+          --unassigned            Set issue as Unassigned
           --url URL               Jira URL
           --input-format FORMAT   Set input format (can be 'json', default is 'edn')
           --output-format FORMAT  Set output format (can be 'json', default is 'edn')

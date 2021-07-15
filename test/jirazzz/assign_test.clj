@@ -59,3 +59,27 @@
            :body {:name "bad-user"}}]
          (tu/requests))))
 
+(deftest unassign
+  (tu/respond (:meta tu/responses))
+  (tu/respond (:sprint tu/responses))
+
+  (let [r (jirazzz assign
+                   --issue "JZ-123"
+                   --unassigned)]
+    (is (= 0
+           (:exit r))
+        (:err r))
+    (is (= "JZ-123 unassigned\n"
+           (:out r))
+        (:err r)))
+
+  (is (= [{:uri (:meta tu/jira-paths)
+           :method "get"
+           :query-string "projectKeys=JZ"}
+          ; TODO don't get sprint if we aren't going to use it.
+          {:uri (:sprint tu/jira-paths)
+           :method "get"}
+          {:uri (:assignee tu/jira-paths)
+           :method "put"
+           :body {:name "-1"}}]
+         (tu/requests))))

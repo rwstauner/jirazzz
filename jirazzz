@@ -299,7 +299,7 @@
                  opts)]
     (-> opts
         (show-errors)
-        (render-template "{{issue}} assigned to {{assignee}}"))))
+        (render-template "{{issue}} {% if assignee = \"-1\" %}unassigned{% else %}assigned to {{assignee}}{% endif %}"))))
 
 (defn $transition
   {:command 'transition
@@ -388,6 +388,8 @@
      [nil  "--rapid-view ID" "RapidView id"]
      [nil  "--summary SUMMARY" "Issue summary"]
      [nil  "--transition NAME" "Transition issue to this state"]
+     [nil  "--unassigned" "Set issue as Unassigned"
+      :assoc-fn (fn [o & _] (assoc o :assignee "-1"))]
      [nil  "--url URL" "Jira URL"]
 
      [nil  "--input-format FORMAT" "Set input format (can be 'json', default is 'edn')"

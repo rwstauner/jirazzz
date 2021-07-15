@@ -155,6 +155,7 @@
     (when (= 401 (:status response))
       (throw (ex-info "401 Unauthorized; Check the headers in your config."
                       (select-keys response [:status]))))
+    ; TODO: parse body but always include body/status for consistency
     (-> response
         :body
         maybe-string
@@ -262,18 +263,16 @@
                     (string/upper-case (str verb))
                     (str verb))
       :sort ~(or weight 2)}
-     [opts path data]
-     (let [argmap (or (some->> data (parse-string opts))
+     [opts path & data]
+     (let [argmap (or (some->> data first (parse-string opts))
                       {})
            response (jira-req opts ~(keyword verb) path argmap)
-           is-json? (-> response
+           is-json? (some-> response
                         (get-in [:headers :content-type])
                         (->> (re-find #"/json")))]
-       (println (-> response
-                    (dissoc :headers)
+       (-> response
                     (cond->
-                      is-json? (update :body parse-json))
-                    ->string)))))
+                      is-json? (update :body parse-json))))))
 
 
 (make-req-cmd get)

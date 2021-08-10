@@ -319,9 +319,9 @@
   {:command 'create
    :doc "Create issue: jirazzz create --summary … --description …"}
   [opts]
-  (-> opts
-      create-issue
-      :issue))
+  (let [opts (-> opts create-issue)]
+    (or (:issue opts)
+        (show-errors opts))))
 
 
 (defn issue

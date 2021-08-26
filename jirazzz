@@ -218,7 +218,7 @@
 
 (defn transition
   [opts]
-  (if-not (:transition opts)
+  (if (string/blank? (:transition opts))
     opts
     (let [issue (:issue opts)
           path (str "/rest/api/2/issue/" issue "/transitions")

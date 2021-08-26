@@ -20,6 +20,7 @@
                      --assignee "me"
                      --issue-type "Task"
                      --summary "hi there"
+                     --transition "" ; none
                      --description "meh"))]
     (is (= 0
            (:exit r))

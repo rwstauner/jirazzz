@@ -142,8 +142,9 @@
     :headers {"content-type" "application/json"}
     :body (json/generate-string
             {:sprints
-             [{:id 1 :state "CLOSED"}
-              {:id 2 :state "ACTIVE"}
+             [{:id 0 :state "CLOSED"}
+              {:id 1 :name "no" :state "ACTIVE"}
+              {:id 2 :name "yes" :state "ACTIVE"}
               {:id 3 :state "FUTURE?"}]})}
    :transitions
    {:match {:uri (jira-path :transitions)}

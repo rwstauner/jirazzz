@@ -3,6 +3,7 @@
  :project "JZ"
  :rapid-view 98
  :issue-type "Task"
+ :sprint-pattern "yes"
  :custom-fields
  {:sprint-id :customfield_12345
   :acceptance-criteria :customfield_23456}

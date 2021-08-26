@@ -166,6 +166,11 @@
         ; if there is no body return the whole response
         (or (dissoc response :opts :headers)))))
 
+(defn sprint-pattern
+  [opts]
+  (re-pattern (or (:sprint-pattern opts)
+                  ".")))
+
 
 (defn get-sprint-id
   [opts]
@@ -174,7 +179,8 @@
                       :sprints
                       (->> (remove #(= (:state %) "CLOSED"))))
           sprint-id (-> (or (-> sprints
-                                (->> (filter #(= (:state %) "ACTIVE")))
+                                (->> (filter #(= (:state %) "ACTIVE"))
+                                     (filter #(re-find (sprint-pattern opts) (:name %))))
                                 first)
                             (-> sprints
                                 first))
@@ -400,6 +406,7 @@
      [nil  "--issue-type TYPE" "Issue Type"]
      ["-p" "--project PROJECT" "Project for issue creation"]
      [nil  "--rapid-view ID" "RapidView id"]
+     [nil  "--sprint-pattern PATTERN" "Regular Expression to find current sprint"]
      [nil  "--summary SUMMARY" "Issue summary"]
      [nil  "--transition NAME" "Transition issue to this state"]
      [nil  "--unassigned" "Set issue as Unassigned"

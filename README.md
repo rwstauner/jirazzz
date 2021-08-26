@@ -45,6 +45,7 @@ your own cookie (see "Example Config" below).
           --issue-type TYPE           Issue Type
       -p, --project PROJECT           Project for issue creation
           --rapid-view ID             RapidView id
+          --sprint-pattern PATTERN    Regular Expression to find current sprint
           --summary SUMMARY           Issue summary
           --transition NAME           Transition issue to this state
           --unassigned                Set issue as Unassigned
@@ -85,6 +86,8 @@ An alternate can be specified with env var `JIRAZZZ_CONFIG_FILE`.
  :commit-template "[{{issue}}] {{summary}}\n\n{{description}}"
  ; Transition issue to this state.
  :transition "ready for review"
+ ; Pattern to match against sprint names when looking for current (first ACTIVE) sprint.
+ :sprint-pattern "."
  ; Values for defined custom fields.
  :storypoints 1
  ; Aliases for custom fields so they are recognized by config/arguments.

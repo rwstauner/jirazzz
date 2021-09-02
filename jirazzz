@@ -1,4 +1,5 @@
 #!/usr/bin/env bb
+;; Source: https://github.com/rwstauner/jirazzz
 
 (ns jirazzz
   {:clj-kondo/config '{:linters

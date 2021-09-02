@@ -8,6 +8,17 @@ Maybe you can't configure cli authentication, or don't want to use basic auth...
 Just visit jira in your browser and steal
 your own cookie (see "Example Config" below).
 
+## Installation
+
+Install Babashka. Then, Inside a directory that is on your path, such as `/usr/local/bin`:
+
+```
+wget https://raw.githubusercontent.com/rwstauner/jirazzz/main/jirazzz
+chmod u+x jirazzz
+wget https://raw.githubusercontent.com/rwstauner/jirazzz/main/example-config.edn -O ~/.jirazzz.edn
+```
+
+Finally, adjust `~/.jirazzz.edn` as necessary.
 
 ## Usage
 

@@ -15,7 +15,7 @@ Install Babashka. Then, Inside a directory that is on your path, such as `/usr/l
 ```
 wget https://raw.githubusercontent.com/rwstauner/jirazzz/main/jirazzz
 chmod u+x jirazzz
-wget https://raw.githubusercontent.com/rwstauner/jirazzz/main/example-config.edn -o ~/.jirazzz.edn
+wget https://raw.githubusercontent.com/rwstauner/jirazzz/main/example-config.edn -O ~/.jirazzz.edn
 ```
 
 Finally, adjust `~/.jirazzz.edn` as necessary.

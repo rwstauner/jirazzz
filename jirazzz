@@ -241,6 +241,13 @@
                     {:json {:transition {:id t-id}}})
           opts)))))
 
+(defn add-comment
+  [opts]
+  (jira-req opts
+            :post
+            (str "/rest/api/2/issue/" (:issue opts) "/comment")
+            {:json {:body (:comment opts)}})
+  opts)
 
 (defn create-issue
   [opts]
@@ -339,6 +346,17 @@
       (jira-req :get (str "/rest/api/2/issue/" (or ky
                                                    (:issue opts))))))
 
+(defn $comment
+  {:command 'comment
+   :doc "Add comment to issue: jirazzz comment --issue ABC-123 --comment 'Something to say'"}
+  [opts & [comment-body]]
+  (-> opts
+      (cond->
+        comment-body (assoc :comment comment-body))
+      add-comment
+      show-errors
+      (render-template "Comment added to {{issue}}")))
+
 
 (defn issue-pattern
   [opts]
@@ -400,6 +418,7 @@
 
      [nil  "--assignee USERNAME" "Assign issue to username (-1 for unassigned)"]
      [nil  "--backlog" "Put isue in backlog instead of current sprint"]
+     [nil  "--comment BODY" "Comment body to add to issue"]
      [nil  "--commit-template TEMPLATE" "Selmer template for adding issue to commit message"]
      [nil  "--description DESC" "Issue description"]
      ["-i" "--issue KEY" "Issue Key"]

@@ -22,6 +22,7 @@
                  (->> (map #(-> (re-find #"^\s+(\S+)\s+" %)
                                 second))))
              ["assign"
+              "comment"
               "commit-msg"
               "create"
               "issue"

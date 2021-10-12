@@ -31,6 +31,7 @@ Finally, adjust `~/.jirazzz.edn` as necessary.
     Commands:
 
       assign       Set assignee on issue: jirazzz assign --issue ABC-123 username
+      comment      Add comment to issue: jirazzz comment --issue ABC-123 --comment 'Something to say'
       commit-msg   Create issue from commit msg if no reference exists
       create       Create issue: jirazzz create --summary … --description …
       issue        Get issue: jirazzz issue KEY
@@ -49,6 +50,7 @@ Finally, adjust `~/.jirazzz.edn` as necessary.
       -h, --help                      Show usage
           --assignee USERNAME         Assign issue to username (-1 for unassigned)
           --backlog                   Put isue in backlog instead of current sprint
+          --comment BODY              Comment body to add to issue
           --commit-template TEMPLATE  Selmer template for adding issue to commit message
           --description DESC          Issue description
       -i, --issue KEY                 Issue Key

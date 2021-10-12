@@ -46,6 +46,7 @@
 
 (def jira-paths
   {:assignee "/rest/api/2/issue/{{issue}}/assignee"
+   :comment "/rest/api/2/issue/{{issue}}/comment"
    :create "/rest/api/2/issue"
    :issue "/rest/api/2/issue/{{issue}}"
    :meta "/rest/api/2/issue/createmeta"
@@ -117,6 +118,13 @@
     :headers {"content-type" "application/json"}
     :body (json/generate-string
             {:key "JZ-123"})}
+
+   :comment
+   {:match {:uri (jira-path :comment)
+            :body (json/generate-string
+                    {:body "one more thing"})}
+    :status 204
+    :body ""}
 
    :issue
    {:match {:uri (jira-path :issue)}

@@ -47,12 +47,14 @@
   (tu/respond (:meta tu/responses))
   (tu/respond (:sprint tu/responses))
   (tu/respond (:create tu/responses))
+  (tu/respond (:comment tu/responses))
   (tu/respond (:transitions tu/responses))
 
   (let [r (jirazzz create
                    --transition "ready for review"
                    --summary "hi there"
                    --description "meh"
+                   --comment "one more thing"
                    --acceptance-criteria "whatever")]
     (is (= 0
            (:exit r))
@@ -77,6 +79,9 @@
              :assignee {:name "-1"}
              :customfield_12345 2
              :customfield_23456 "whatever"}}}
+          {:uri (tu/jira-path :comment)
+           :method "post"
+           :body {:body "one more thing"}}
           {:uri (tu/jira-path :transitions)
            :method "get"}
           {:uri (tu/jira-path :transitions)

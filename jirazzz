@@ -268,8 +268,9 @@
                  (assoc :issue ky)
                  (cond->
                    (not ky) (add-error response)))]
+    (when (:comment opts)
+      (add-comment opts))
     (transition opts)))
-
 
 ; commands
 (defmacro make-req-cmd

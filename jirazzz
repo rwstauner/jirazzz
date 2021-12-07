@@ -6,6 +6,7 @@
                        {:unresolved-symbol
                         {:exclude [(jirazzz/make-req-cmd)]}}}}
   (:require
+    [clojure.pprint :as pprint]
     [babashka.fs :as fs]
     [cheshire.core :as json]
     [clojure.edn :as edn]
@@ -13,7 +14,8 @@
     [clojure.tools.cli :as cli]
     [org.httpkit.client :as http]
     [selmer.parser :as selmer]
-    [selmer.util :as selmer-util]))
+    [selmer.util :as selmer-util])
+  (:import [java.net URLEncoder]))
 
 
 ; cli utils
@@ -137,8 +139,12 @@
   [opts path]
   (str (:url opts) path))
 
-
 (defn jira-req
+  "Send a request to jira
+
+  `req-opts` is a map that may contain:
+  - `:json <value>` the body to post
+  - `:headers {..}`"
   [opts method path & [req-opts]]
   (let [json (some-> req-opts
                      :json
@@ -412,6 +418,20 @@
                  xs))
           ""))))
 
+(defn mine
+  {:command 'mine
+   :doc "List open issues assigned to me"}
+  [opts]
+  (let [{:keys [total issues]}
+        (jira-req opts
+          :get (str "/rest/api/2/search?jql=" (java.net.URLEncoder/encode "assignee=currentuser() AND status != Closed")))]
+    (->> issues
+         (map (fn [{key :key, {:keys [status summary]} :fields}]
+                {:key key
+                 :status (:name status)
+                 :summary (subs summary 0 (min (count summary) 40)) 
+                 :browse (jira-url opts "/browse/ARD-10019")}))
+         (pprint/print-table))))
 
 (def cli-options
   (concat
@@ -522,5 +542,5 @@
           (exit 1))
         (throw e)))))
 
-
-(-main *command-line-args*)
+(when (= *file* (System/getProperty "babashka.file"))
+  (-main *command-line-args*))

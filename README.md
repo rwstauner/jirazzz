@@ -4,6 +4,14 @@ A jira rest client command line app written as a [babashka][babashka] script.
 
 Designed for configurability, to be usable with any jira instance.
 
+## Authentication
+
+### OAuth token
+
+Jira Cloud: Go to https://id.atlassian.com/manage/api-tokens and create a new token. Then put its base64-encoded value in the config (see below).
+
+### Cookie
+
 Maybe you can't configure cli authentication, or don't want to use basic auth...
 Just visit jira in your browser and steal
 your own cookie (see "Example Config" below).
@@ -85,6 +93,8 @@ An alternate can be specified with env var `JIRAZZZ_CONFIG_FILE`.
  :url "https://jira.example.com"
  ; Any headers you want to add to requests (useful for auth).
  :headers {"Cookie" #file ".cookie.txt"}
+ ; or, with an oauth token:
+ ;:headers {"Authorization" "Basic <base64-encoded-token-value>"}
  ; The rapid-view / sprint board id.
  :rapid-view 123
  ; Project key.

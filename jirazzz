@@ -430,7 +430,7 @@
                 {:key key
                  :status (:name status)
                  :summary (subs summary 0 (min (count summary) 40)) 
-                 :browse (jira-url opts "/browse/ARD-10019")}))
+                 :browse (jira-url opts (str "/browse/" key))}))
          (pprint/print-table))))
 
 (def cli-options

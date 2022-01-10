@@ -3,6 +3,8 @@
  :url "https://jira.example.com"
  ; Any headers you want to add to requests (useful for auth).
  :headers {"Cookie" #file ".cookie.txt"}
+ ; or, with an oauth token:
+ ;:headers {"Authorization" "Basic <base64-encoded-token-value>"}
  ; The rapid-view / sprint board id.
  :rapid-view 123
  ; Project key.

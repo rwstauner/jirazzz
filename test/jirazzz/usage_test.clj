@@ -26,6 +26,7 @@
               "commit-msg"
               "create"
               "issue"
+              "mine"
               "parse-log"
               "transition"
               "get"

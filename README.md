@@ -38,18 +38,19 @@ Finally, adjust `~/.jirazzz.edn` as necessary.
 
     Commands:
 
-      assign       Set assignee on issue: jirazzz assign --issue ABC-123 username
-      comment      Add comment to issue: jirazzz comment --issue ABC-123 --comment 'Something to say'
-      commit-msg   Create issue from commit msg if no reference exists
-      create       Create issue: jirazzz create --summary … --description …
-      issue        Get issue: jirazzz issue KEY
-      mine         List open issues assigned to me
-      parse-log    Parse commit log and transition referenced issues
-      transition   Transition issue: jirazzz transition --issue ABC-123 --transition 'done'
-      get          Send GET    request: jirazzz get    /rest/api/x/y/z …
-      post         Send POST   request: jirazzz post   /rest/api/x/y/z …
-      put          Send PUT    request: jirazzz put    /rest/api/x/y/z …
-      delete       Send DELETE request: jirazzz delete /rest/api/x/y/z …
+      assign        Set assignee on issue: jirazzz assign --issue ABC-123 username
+      comment       Add comment to issue: jirazzz comment --issue ABC-123 --comment 'Something to say'
+      commit-msg    Create issue from commit msg if no reference exists
+      create        Create issue: jirazzz create --summary … --description …
+      example-alias Custom alias command
+      issue         Get issue: jirazzz issue KEY
+      mine          List open issues assigned to me
+      parse-log     Parse commit log and transition referenced issues
+      transition    Transition issue: jirazzz transition --issue ABC-123 --transition 'done'
+      get           Send GET    request: jirazzz get    /rest/api/x/y/z …
+      post          Send POST   request: jirazzz post   /rest/api/x/y/z …
+      put           Send PUT    request: jirazzz put    /rest/api/x/y/z …
+      delete        Send DELETE request: jirazzz delete /rest/api/x/y/z …
 
     Options can be specified on the command line or in example-config.edn
     Any aliases defined in {:custom-fields {:your-name :customfield_00000}}
@@ -122,6 +123,9 @@ An alternate can be specified with env var `JIRAZZZ_CONFIG_FILE`.
   ; Other fields can be specified on the command line or in config.
   :storypoints :customfield_10001
  }
+ :aliases
+ {example-alias {:doc "Custom alias command"
+                 :args ["search" "--jql" "project = ABC AND statusCategory IN (…)"]}}
 }
 ```
 

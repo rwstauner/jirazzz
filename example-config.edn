@@ -31,4 +31,7 @@
   ; Other fields can be specified on the command line or in config.
   :storypoints :customfield_10001
  }
+ :aliases
+ {example-alias {:doc "Custom alias command"
+                 :args ["search" "--jql" "project = ABC AND statusCategory IN (…)"]}}
 }

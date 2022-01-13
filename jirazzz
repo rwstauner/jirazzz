@@ -479,6 +479,12 @@
            (filter first)
            (into {}))))
 
+(defn aliases
+  [config]
+  (-> (:aliases config)
+      (->> (map (fn [[k v]] [k (with-meta v (select-keys v [:doc]))]))
+           (into {}))))
+
 
 (defn usage
   [{:keys [errors summary]}]
@@ -487,8 +493,10 @@
         ""
         "Commands:"
         ""
-        (for [[cmd v] (sort-by (juxt #(-> % second meta :sort) first) (commands))]
-          (format "  %-12s %s" cmd (-> v meta :doc)))
+        (let [cmds (sort-by (juxt #(-> % second meta :sort) first) (merge (commands) (aliases config)))
+              max-len (apply max (map (comp count str first) cmds))]
+          (for [[cmd v] cmds]
+            (format (str "  %-" max-len "s %s") cmd (-> v meta :doc))))
         ""
         (str "Options can be specified on the command line or in " config-file)
         "Any aliases defined in {:custom-fields {:your-name :customfield_00000}}"
@@ -500,11 +508,33 @@
        (filter identity)
        (string/join "\n")))
 
+(defn parsed-opts-merger
+  [old-val new-val]
+  ((condp #(%1 %2) new-val
+    map? merge
+    seq? concat
+    (fn [_ov nv] nv)) old-val new-val))
+
+(def merge-parsed-cli (partial merge-with parsed-opts-merger))
+
+(defn parse-cli-opts
+  [config args]
+  (loop [acc {}
+         config config
+         args args]
+    (let [parsed (cli/parse-opts args cli-options :in-order true)
+          args (:arguments parsed)
+          cmdname (some-> args first symbol)
+          result (merge-parsed-cli acc parsed)]
+      (if-let [a (get-in config [:aliases cmdname])]
+        (recur result config (concat (:args a) (rest args)))
+        (merge-parsed-cli result (cli/parse-opts args cli-options))))))
+
 
 ; main
 (defn parse-args
   [args]
-  (let [parsed (cli/parse-opts args cli-options)
+  (let [parsed (parse-cli-opts config args)
         args (-> parsed :arguments)
         cmdname (some-> args first symbol)
         cmd (get (commands) cmdname)

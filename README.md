@@ -43,6 +43,7 @@ Finally, adjust `~/.jirazzz.edn` as necessary.
       commit-msg   Create issue from commit msg if no reference exists
       create       Create issue: jirazzz create --summary … --description …
       issue        Get issue: jirazzz issue KEY
+      mine         List open issues assigned to me
       parse-log    Parse commit log and transition referenced issues
       transition   Transition issue: jirazzz transition --issue ABC-123 --transition 'done'
       get          Send GET    request: jirazzz get    /rest/api/x/y/z …

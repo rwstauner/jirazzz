@@ -424,7 +424,7 @@
   [opts]
   (let [{:keys [total issues]}
         (jira-req opts
-          :get (str "/rest/api/2/search?jql=" (java.net.URLEncoder/encode "assignee=currentuser() AND status != Closed")))]
+          :get (str "/rest/api/2/search?jql=" (java.net.URLEncoder/encode "assignee=currentuser() AND statusCategory != Done")))]
     (->> issues
          (map (fn [{key :key, {:keys [status summary]} :fields}]
                 {:key key

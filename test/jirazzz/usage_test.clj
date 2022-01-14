@@ -28,6 +28,7 @@
               "issue"
               "mine"
               "parse-log"
+              "search"
               "transition"
               "get"
               "post"

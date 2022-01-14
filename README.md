@@ -46,6 +46,7 @@ Finally, adjust `~/.jirazzz.edn` as necessary.
       issue         Get issue: jirazzz issue KEY
       mine          List open issues assigned to me
       parse-log     Parse commit log and transition referenced issues
+      search        Search issues: jirazzz search "some jql fragment"
       transition    Transition issue: jirazzz transition --issue ABC-123 --transition 'done'
       get           Send GET    request: jirazzz get    /rest/api/x/y/z …
       post          Send POST   request: jirazzz post   /rest/api/x/y/z …
@@ -66,6 +67,7 @@ Finally, adjust `~/.jirazzz.edn` as necessary.
       -i, --issue KEY                 Issue Key
           --issue-pattern PATTERN     Regular Expression to find issue in commit message
           --issue-type TYPE           Issue Type
+          --jql SEARCH                JQL fragment used for search
       -p, --project PROJECT           Project for issue creation
           --rapid-view ID             RapidView id
           --sprint-pattern PATTERN    Regular Expression to find current sprint

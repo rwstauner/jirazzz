@@ -50,6 +50,7 @@
    :create "/rest/api/2/issue"
    :issue "/rest/api/2/issue/{{issue}}"
    :meta "/rest/api/2/issue/createmeta"
+   :search "/rest/api/2/search"
    :sprint "/rest/greenhopper/1.0/sprintquery/{{rapid-view}}"
    :transitions "/rest/api/2/issue/{{issue}}/transitions"})
 
@@ -144,6 +145,13 @@
                :issuetypes
                [{:id 1 :name "Task"}
                 {:id 2 :name "Story"}]}]})}
+   :search
+   {:match {:uri (jira-path :search)}
+    :status 200
+    :headers {"content-type" "application/json"}
+    :body (json/generate-string
+            {:issues [{:key "ABC-234"
+                       :fields {:status {:name "idk"} :summary "sum"}}]})}
    :sprint
    {:match {:uri (jira-path :sprint)}
     :status 200

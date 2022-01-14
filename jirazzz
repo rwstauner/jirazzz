@@ -70,11 +70,18 @@
   (partial edn/read-string {:readers {'env env
                                       'file read-file}}))
 
+(def default-config
+  {:aliases
+   {'mine {:doc "List open issues assigned to me"
+           :args ["search" "--jql" "assignee = currentuser() AND statusCategory != Done"]}}})
+
+(def merge-deep (partial merge-with (fn [o n] (if (map? o) (merge o n) n))))
 
 (def config
-  (when (fs/exists? config-file)
-    (-> config-file str slurp read-edn)))
-
+  (merge-deep
+    default-config
+    (when (fs/exists? config-file)
+      (-> config-file str slurp read-edn))))
 
 (defn maybe-string
   [s]
@@ -110,6 +117,10 @@
 
 
 (def ->nil (constantly nil))
+
+(defn url-encode
+  [s]
+  (URLEncoder/encode (str s)))
 
 
 (defn render-template
@@ -418,13 +429,15 @@
                  xs))
           ""))))
 
-(defn mine
-  {:command 'mine
-   :doc "List open issues assigned to me"}
-  [opts]
+; https://support.atlassian.com/jira-software-cloud/docs/advanced-search-reference-jql-fields/
+(defn search
+  {:command 'search
+   :doc "Search issues: jirazzz search \"some jql fragment\""}
+  [opts & [jql]]
   (let [{:keys [issues] error-msgs :errorMessages}
         (jira-req opts
-          :get (str "/rest/api/2/search?jql=" (java.net.URLEncoder/encode "assignee=currentuser() AND statusCategory != Done")))]
+                  :get (str "/rest/api/2/search?jql=" (url-encode (or jql
+                                                                      (:jql opts)))))]
     (if error-msgs
       (run! println error-msgs)
       (->> issues
@@ -448,6 +461,7 @@
      ["-i" "--issue KEY" "Issue Key"]
      [nil  "--issue-pattern PATTERN" "Regular Expression to find issue in commit message"]
      [nil  "--issue-type TYPE" "Issue Type"]
+     [nil  "--jql SEARCH" "JQL fragment used for search"]
      ["-p" "--project PROJECT" "Project for issue creation"]
      [nil  "--rapid-view ID" "RapidView id"]
      [nil  "--sprint-pattern PATTERN" "Regular Expression to find current sprint"]

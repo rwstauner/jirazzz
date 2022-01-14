@@ -7,4 +7,7 @@
  :custom-fields
  {:sprint-id :customfield_12345
   :acceptance-criteria :customfield_23456}
+ :aliases
+ {testy {:doc "Test alias"
+         :args ["search" "--jql" "a or b"]}}
 }

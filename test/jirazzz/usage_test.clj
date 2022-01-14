@@ -29,6 +29,7 @@
               "mine"
               "parse-log"
               "search"
+              "testy"
               "transition"
               "get"
               "post"

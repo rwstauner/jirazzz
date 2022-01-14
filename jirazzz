@@ -422,16 +422,19 @@
   {:command 'mine
    :doc "List open issues assigned to me"}
   [opts]
-  (let [{:keys [total issues]}
+  (let [{:keys [issues] error-msgs :errorMessages}
         (jira-req opts
           :get (str "/rest/api/2/search?jql=" (java.net.URLEncoder/encode "assignee=currentuser() AND statusCategory != Done")))]
-    (->> issues
-         (map (fn [{key :key, {:keys [status summary]} :fields}]
-                {:key key
-                 :status (:name status)
-                 :summary (subs summary 0 (min (count summary) 40)) 
-                 :browse (jira-url opts (str "/browse/" key))}))
-         (pprint/print-table))))
+    (if error-msgs
+      (run! println error-msgs)
+      (->> issues
+           (map (fn [{key :key, {:keys [status summary]} :fields}]
+                  {"key" key
+                   "status" (:name status)
+                   "summary" (subs summary 0 (min (count summary) 40))
+                   "browse url" (jira-url opts (str "/browse/" key))}))
+           (pprint/print-table)))
+    ""))
 
 (def cli-options
   (concat

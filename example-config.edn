@@ -12,7 +12,7 @@
  ; Jira username (might be something like "flastname").
  :assignee #env USER
  ; Type of issue to create.
- :issue-type "Task"
+ :type-id "Task"
  ; Pattern to look for in commit messages.  Should have single capture group.
  :issue-pattern "\\[([A-Z]+-[0-9]+)\\]"
  ; A selmer template for how to add issue to commit messages.

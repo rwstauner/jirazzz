@@ -276,8 +276,8 @@
                    {:json {:fields (merge
                                      (select-keys opts [:summary
                                                         :description])
-                                     {:project {:id (:project-id opts)}
-                                      :issuetype {:id (:type-id opts)}
+                                     {:project {:key (:project-id opts)}
+                                      :issuetype {:name (:type-id opts)}
                                       :assignee {:name (jira-user opts :assignee)}}
                                      (custom-fields opts))}})
         ky (:key response)
